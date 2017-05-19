@@ -12,6 +12,6 @@ public class AdminService extends Service {
     }
 
     public String getTime() {
-        return driver.findElement(By.xpath("//*[@id=\"serverTime\"]/tbody/tr[1]/td[2]")).getText();
+        return driver.findElement(By.xpath("//*[@id=\"serverTime\"]/tbody/tr[2]/td[2]")).getText();
     }
 }
