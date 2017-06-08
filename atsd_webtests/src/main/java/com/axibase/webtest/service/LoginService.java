@@ -29,7 +29,7 @@ public class LoginService extends Service {
     }
 
     public boolean logout() {
-        String btn_logout = "//a[@title='Logout']";
+        String btn_logout = "//a[@id='logoutBtn' or title='Logout']";
         if(driver.findElements(By.xpath(btn_logout)).size() == 1) {
             driver.findElement(By.xpath(btn_logout)).click();
             return true;
