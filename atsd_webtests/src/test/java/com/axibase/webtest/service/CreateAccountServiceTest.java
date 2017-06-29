@@ -28,7 +28,7 @@ public class CreateAccountServiceTest extends AtstTest {
                     System.currentTimeMillis() + ".png";
             this.saveScreenshot(filepath);
             System.out.println(err.toString());
-            System.exit(1);
+            throw err;
         }
     }
 }
