@@ -81,7 +81,7 @@ function check_latest_pages {
 function run_webtests {
     apt-get install -y maven
     cd /root/atsd_webtests
-    export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64
+    export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
     mvn test
 }
 
@@ -113,7 +113,7 @@ function install_atsd {
     #apt-get --print-uris --yes install atsd | grep ^\' | cut -d\' -f2 | xargs wget
     #dpkg -i install *
     #dpkg -i install atsd*
-    sudo apt-get install -y atsd
+    apt-get install -y atsd
     su axibase -c /opt/atsd/install_user.sh
     if [ $? -ne 0 ]; then
         exit 3
