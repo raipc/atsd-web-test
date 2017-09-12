@@ -35,9 +35,9 @@ function main {
 
 function check_latest_pages {
     cd /root
-    pagenamedeb="atsd_ce_deb_latest.htm"
-    pagenamerpm="atsd_ce_rpm_latest.htm"
-    pagenamerpmsles="atsd_ce_rpm_sles_latest.htm"
+    pagenamedeb="atsd_deb_latest.htm"
+    pagenamerpm="atsd_rpm_latest.htm"
+    pagenamerpmsles="atsd_rpm_sles_latest.htm"
     wget https://axibase.com/public/$pagenamedeb -O $pagenamedeb
     wget https://axibase.com/public/$pagenamerpm -O $pagenamerpm
     wget https://axibase.com/public/$pagenamerpmsles -O $pagenamerpmsles
