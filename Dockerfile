@@ -1,5 +1,6 @@
 FROM ubuntu:16.04
-MAINTAINER ATSD Developers <dev-atsd@axibase.com>
+
+LABEL com.axibase.maintainer="ATSD Developers <dev-atsd@axibase.com>"
 
 #put script to docker
 ADD check_atsd.sh /root/
