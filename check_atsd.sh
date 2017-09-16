@@ -106,7 +106,7 @@ function check_package_links {
 function run_webtests {
     cd /root/atsd_webtests
     export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
-    mvn test
+    mvn --quiet test
 }
 
 function infinity_loop {
