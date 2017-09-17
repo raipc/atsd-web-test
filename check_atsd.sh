@@ -114,6 +114,7 @@ function infinity_loop {
 }
 
 function check_repository_atsd_revision {
+    apt-get update
     availableRevisions="`apt-cache policy atsd`"
     if ! echo "$availableRevisions" | grep -q "$ATSD_REQUIRED_REVISION"; then
         echo "Can not find the specified revision in deb repository."
