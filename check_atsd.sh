@@ -128,7 +128,7 @@ function check_repository_atsd_revision {
 function install_atsd {
     mkdir -p $PACKAGES_PATH
     cd $PACKAGES_PATH
-    apt-get install -y atsd
+    DEBIAN_FRONTEND=noninteractive apt-get install -y atsd
 }
 
 function check_installed_atsd_revision {
