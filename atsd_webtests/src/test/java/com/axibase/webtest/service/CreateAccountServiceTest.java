@@ -1,6 +1,8 @@
 package com.axibase.webtest.service;
 
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,9 +19,10 @@ public class CreateAccountServiceTest extends AtstTest {
                 Assert.assertEquals(generateAssertMessage("Should get page with title 'Create Account'"), AtstTest.driver.getTitle(), "Create Account");
                 CreateAccountService cas = new CreateAccountService(AtstTest.driver);
                 Assert.assertTrue("Can't create account", cas.createUser(AtstTest.login, AtstTest.password));
-                Assert.assertTrue(generateAssertMessage("Should get redirect on page with title 'Login'"), AtstTest.driver.getTitle().equals("Login"));
+                URL url = new URL(AtstTest.driver.getCurrentUrl());
+                Assert.assertTrue(generateAssertMessage("Should get redirect on page with title 'Login'"), url.getPath().equals("/"));
             } else {
-                System.out.println("User allready created");
+                System.out.println("User already created");
             }
         } catch (AssertionError err) {
             String filepath = AtstTest.screenshotDir + "/" +
@@ -29,6 +32,8 @@ public class CreateAccountServiceTest extends AtstTest {
             this.saveScreenshot(filepath);
             System.out.println(err.toString());
             throw err;
+        } catch (MalformedURLException err) {
+            throw new RuntimeException("Bad URL returned from Webdriver", err);
         }
     }
 }
