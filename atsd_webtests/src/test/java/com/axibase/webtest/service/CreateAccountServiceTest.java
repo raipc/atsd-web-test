@@ -20,7 +20,7 @@ public class CreateAccountServiceTest extends AtstTest {
                 CreateAccountService cas = new CreateAccountService(AtstTest.driver);
                 Assert.assertTrue("Can't create account", cas.createUser(AtstTest.login, AtstTest.password));
                 URL url = new URL(AtstTest.driver.getCurrentUrl());
-                Assert.assertTrue(generateAssertMessage("Should get redirect on page with title 'Login'"), url.getPath().equals("/"));
+                Assert.assertTrue(generateAssertMessage("Should get redirect on home page"), url.getPath().equals("/"));
             } else {
                 System.out.println("User already created");
             }
