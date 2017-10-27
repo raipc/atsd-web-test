@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by sild on 02.02.15.
  */
-abstract public class AtstTest {
+abstract public class AtsdTest {
     protected static WebDriver driver = null;
     protected static final String propertypath = "atsd.properties";
     protected static String login;
@@ -62,7 +62,6 @@ abstract public class AtstTest {
         DesiredCapabilities dcap = new DesiredCapabilities();
         String[] phantomArgs = new  String[] {"--webdriver-loglevel=WARN"};
         dcap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
-        System.setProperty("phantomjs.binary.path", "/opt/bin/phantomjs");
 //
 //        System.setProperty("webdriver.chrome.driver", "/opt/chromedriver/chromedriver");
 //        dcap.setCapability("chrome.switches", Lists.newArrayList("--homepage=about:blank",
