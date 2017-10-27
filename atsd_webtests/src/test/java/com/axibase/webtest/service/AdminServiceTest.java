@@ -9,12 +9,11 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by sild on 02.02.15.
- */
+
 public class AdminServiceTest extends AtstTest {
     private static final String[] NTP_SERVERS = new String[]{"us.pool.ntp.org", "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"};
     private static final long MAX_DIFF_TIME = 60000;
@@ -31,59 +30,54 @@ public class AdminServiceTest extends AtstTest {
                     System.currentTimeMillis() + ".png";
             this.saveScreenshot(filepath);
             System.out.println(err.toString());
-            Assert.fail();
+            throw err;
         }
 
     }
 
     private long getAtsdTime() {
-        Assert.assertEquals(this.generateAssertMessage("Should get login page"), this.driver.getTitle(), LoginService.title);
-        LoginService ls = new LoginService(AtstTest.driver);
-        ls.login(AtstTest.login, AtstTest.password);
-        long atsd_time = 0;
-        AtstTest.driver.navigate().to(AtstTest.url + "/admin/system-information");
-        Assert.assertEquals("title should be System Information", "System Information", AtstTest.driver.getTitle());
-        AdminService as = new AdminService(AtstTest.driver);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzzz");
-        String atsd_date_string = as.getTime();
+        Assert.assertEquals(this.generateAssertMessage("Should get login page"), LoginService.title, driver.getTitle());
+        LoginService loginService = new LoginService(driver);
+        loginService.login(login, password);
+        driver.navigate().to(url + "/admin/system-information");
+        Assert.assertEquals("title should be System Information", "System Information", driver.getTitle());
+        AdminService adminService = new AdminService(driver);
+        String atsdDateString = adminService.getTime();
         try {
-            Date e = dateFormat.parse(atsd_date_string);
-            atsd_time = e.getTime();
-        } catch (Exception var6) {
-            Assert.assertTrue(generateAssertMessage("Cant parse getting date row: " + atsd_date_string), false);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzzz");
+            Date atsdDate = dateFormat.parse(atsdDateString);
+            return atsdDate.getTime();
+        } catch (Exception e) {
+            Assert.fail(generateAssertMessage("Cant parse getting date row: " + atsdDateString));
         }
-        return atsd_time;
+        return 0;
     }
 
     private long getCurrentTime() {
-        long cur_time = 0;
+        long currentTime = 0;
         NTPUDPClient client = new NTPUDPClient();
         client.setDefaultTimeout(WAIT_FOR_SERVER_RESPONSE);
         try {
             client.open();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EE, MMM dd yyyy HH:mm:ss.SSS zzz");
             for (String server : NTP_SERVERS) {
                 try {
                     InetAddress ioe = InetAddress.getByName(server);
                     TimeInfo info = client.getTime(ioe);
                     TimeStamp destNtpTime = TimeStamp.getNtpTime(info.getReturnTime());
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("EE, MMM dd yyyy HH:mm:ss.SSS zzz");
-
-                    try {
-                        Date date = dateFormat.parse(destNtpTime.toUTCString());
-                        cur_time = date.getTime();
-                        break;
-                    } catch (Exception e) {
-                        Assert.assertTrue(generateAssertMessage("Cannot parse current date"), false);
-                    }
+                    Date date = dateFormat.parse(destNtpTime.toUTCString());
+                    return date.getTime();
+                } catch (ParseException e) { 
+                    Assert.fail(generateAssertMessage("Cannot parse current date"));
                 } catch (Exception e2) {
                     System.out.println("Can't get response from server: " + server + ".");
                 }
             }
         } catch (SocketException se) {
             System.out.println("Can't open client session");
+        } finally {
+            client.close();
         }
-
-        client.close();
-        return cur_time;
+        return currentTime;
     }
 }
