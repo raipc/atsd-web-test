@@ -9,12 +9,11 @@ import org.junit.Test;
 
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class AdminServiceTest extends AtstTest {
+public class AdminServiceTest extends AtsdTest {
     private static final String[] NTP_SERVERS = new String[]{"us.pool.ntp.org", "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"};
     private static final long MAX_DIFF_TIME = 60000;
     private static final int WAIT_FOR_SERVER_RESPONSE = 5000;
@@ -24,12 +23,11 @@ public class AdminServiceTest extends AtstTest {
         try {
             Assert.assertTrue(generateAssertMessage("Time should be different not more 60 sec"), Math.abs(this.getCurrentTime() - this.getAtsdTime()) < MAX_DIFF_TIME);
         } catch (AssertionError err) {
-            String filepath = AtstTest.screenshotDir + "/" +
+            String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
             this.saveScreenshot(filepath);
-            System.out.println(err.toString());
             throw err;
         }
 
@@ -59,16 +57,13 @@ public class AdminServiceTest extends AtstTest {
         client.setDefaultTimeout(WAIT_FOR_SERVER_RESPONSE);
         try {
             client.open();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EE, MMM dd yyyy HH:mm:ss.SSS zzz");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM dd yyyy HH:mm:ss.SSS zzz");
             for (String server : NTP_SERVERS) {
                 try {
                     InetAddress ioe = InetAddress.getByName(server);
                     TimeInfo info = client.getTime(ioe);
-                    TimeStamp destNtpTime = TimeStamp.getNtpTime(info.getReturnTime());
-                    Date date = dateFormat.parse(destNtpTime.toUTCString());
-                    return date.getTime();
-                } catch (ParseException e) { 
-                    Assert.fail(generateAssertMessage("Cannot parse current date"));
+                    TimeStamp ntpTime = TimeStamp.getNtpTime(info.getReturnTime());
+                    return ntpTime.getTime();
                 } catch (Exception e2) {
                     System.out.println("Can't get response from server: " + server + ".");
                 }

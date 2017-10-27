@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by sild on 02.02.15.
  */
-abstract public class AtstTest {
+abstract public class AtsdTest {
     protected static WebDriver driver = null;
     protected static final String propertypath = "atsd.properties";
     protected static String login;
