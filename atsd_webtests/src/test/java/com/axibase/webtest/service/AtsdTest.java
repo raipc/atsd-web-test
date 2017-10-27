@@ -42,6 +42,11 @@ abstract public class AtsdTest {
                 System.out.println("Can't read required properties");
                 System.exit(1);
             }
+
+            String phantomjsBinary = properties.getProperty("phantomjs.binary.path");
+            if (phantomjsBinary != null) {
+                System.setProperty("phantomjs.binary.path", phantomjsBinary);
+            }
         } catch (IOException e) {
             System.out.println("Can't read property file");
             e.printStackTrace();
