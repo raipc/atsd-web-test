@@ -2,14 +2,11 @@ package com.axibase.webtest.cases;
 
 import com.axibase.webtest.service.AtsdTest;
 import com.axibase.webtest.service.LoginService;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.By.ByCssSelector;
-import org.openqa.selenium.By.ByXPath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +55,8 @@ public class CreatePortalTest extends AtsdTest {
             driver.findElement(By.id("view-button")).click();
             driver.findElement(By.id("view-name-button")).click();
             List<String> tabs = new ArrayList<>(driver.getWindowHandles());
+            Assert.assertEquals(generateAssertMessage("Exactly 2 new tabs must be opened"), 3, tabs.size());
+
             for (int i = 1; i < tabs.size(); i++) {
                 driver.switchTo().window(tabs.get(i));
                 List<WebElement> widgets = driver.findElements(By.className("widget"));
