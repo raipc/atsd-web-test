@@ -1,5 +1,7 @@
 package com.axibase.webtest;
 
+import com.axibase.webtest.cases.CreateEntityAndMetriclTest;
+import com.axibase.webtest.cases.CreatePortalTest;
 import com.axibase.webtest.service.*;
 import org.junit.BeforeClass;
 import org.junit.runner.JUnitCore;
@@ -15,7 +17,9 @@ import org.junit.runners.Suite;
         EntitiesServiceTest.class,
         ExportServiceTest.class,
         LoginServiceTest.class,
-        MetricsServiceTest.class
+        MetricsServiceTest.class,
+        CreateEntityAndMetriclTest.class,
+        CreatePortalTest.class
 })
 public class TestSuiteCheckCleanAtsd {
     @BeforeClass
