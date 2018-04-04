@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -73,6 +74,7 @@ abstract public class AtsdTest {
 //                "--no-first-run"));
         if(driver == null) {
             driver = new PhantomJSDriver(dcap);
+            driver.manage().window().setSize(new Dimension(1280, 720));
 //            driver = new ChromeDriver(dcap);
             driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
             driver.navigate().to(url);
