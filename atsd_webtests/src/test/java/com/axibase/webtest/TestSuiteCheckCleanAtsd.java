@@ -26,6 +26,6 @@ import org.junit.runners.Suite;
 public class TestSuiteCheckCleanAtsd {
     @BeforeClass
     public static void createUser() {
-        JUnitCore.runClasses(CreateAccountServiceTest.class);
+        JUnitCore.runClasses(AccountServiceTest.class);
     }
 }

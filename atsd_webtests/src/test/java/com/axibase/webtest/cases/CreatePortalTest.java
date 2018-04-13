@@ -3,6 +3,7 @@ package com.axibase.webtest.cases;
 import com.axibase.webtest.service.AtsdTest;
 import com.axibase.webtest.service.LoginService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,13 +14,14 @@ import java.util.List;
 
 public class CreatePortalTest extends AtsdTest {
 
+    @Before
+    public void setUp(){
+        login();
+    }
+
     @Test
     public void createPortal() {
         try {
-            Assert.assertEquals(generateAssertMessage("Should get login page"), driver.getTitle(), LoginService.title);
-            LoginService ls = new LoginService(AtsdTest.driver);
-            Assert.assertTrue(generateAssertMessage("Can't login"), ls.login(AtsdTest.login, AtsdTest.password));
-            AtsdTest.driver.navigate().to(AtsdTest.url);
 
             driver.findElement(By.xpath("//a[normalize-space(text())='Portals']")).click();
             boolean panelVisible = driver.findElement(By.xpath("//h4[normalize-space(text())='Portals']")).isDisplayed();

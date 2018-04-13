@@ -56,23 +56,22 @@ abstract public class AtsdTest {
     }
 
     public static void cleanup() {
-        if(driver != null) {
+        if (driver != null) {
             driver.close();
         }
     }
 
 
-
     @Before
     public void init() {
         DesiredCapabilities dcap = new DesiredCapabilities();
-        String[] phantomArgs = new  String[] {"--webdriver-loglevel=WARN"};
+        String[] phantomArgs = new String[]{"--webdriver-loglevel=WARN"};
         dcap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
 //
 //        System.setProperty("webdriver.chrome.driver", "/opt/chromedriver/chromedriver");
 //        dcap.setCapability("chrome.switches", Lists.newArrayList("--homepage=about:blank",
 //                "--no-first-run"));
-        if(driver == null) {
+        if (driver == null) {
             driver = new PhantomJSDriver(dcap);
             driver.manage().window().setSize(new Dimension(1280, 720));
 //            driver = new ChromeDriver(dcap);
@@ -93,7 +92,7 @@ abstract public class AtsdTest {
         String message = "";
         String currentUrl = "driver is null, can't get last url";
         String pageSrc = "driver is null, can't get page source";
-        if(null != driver) {
+        if (null != driver) {
             currentUrl = driver.getCurrentUrl();
             pageSrc = driver.getPageSource();
         }
@@ -103,8 +102,29 @@ abstract public class AtsdTest {
         return message;
     }
 
+    protected void login() {
+        try {
+            if (driver.getTitle().equals(LoginService.title)) {
+                LoginService ls = new LoginService(AtsdTest.driver);
+                if (ls.login(AtsdTest.login, AtsdTest.password)) {
+                    AtsdTest.driver.navigate().to(AtsdTest.url);
+                } else {
+                    throw new Exception("Can't login");
+                }
+            } else {
+                throw new Exception("Expected title is '" + LoginService.title + "' but there is '" + driver.getTitle());
+            }
+        } catch (Exception err) {
+            String filepath = AtsdTest.screenshotDir + "/" + this.getClass().getSimpleName() + "_"
+                    + Thread.currentThread().getStackTrace()[1].getMethodName() + "_" + System.currentTimeMillis()
+                    + ".png";
+            this.saveScreenshot(filepath);
+            throw new RuntimeException(err);
+        }
+    }
+
     protected void saveScreenshot(String filepath) {
-        File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         try {
             FileUtils.copyFile(scrFile, new File(filepath), true);
             System.out.println("screenshot saved to '" + filepath + "'");
