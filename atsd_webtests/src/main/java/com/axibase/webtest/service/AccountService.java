@@ -36,7 +36,7 @@ public class AccountService extends Service {
                     e.printStackTrace();
                 }
                 yes = driver.findElement(By.xpath("//button[normalize-space(text())='Yes']"));
-            } while (yes.getText().isEmpty());
+            } while (yes.getText().isEmpty()); // Button "Yes" can be find but probably not initialized
 
             yes.click();
             return true;

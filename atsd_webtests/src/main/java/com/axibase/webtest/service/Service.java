@@ -8,11 +8,8 @@ import org.openqa.selenium.WebDriver;
  */
 abstract public class Service {
     WebDriver driver;
-    public Service(WebDriver driver) {
-       this.driver = driver;
-    }
 
-    public Service() {
-        System.out.println("Can't create some services without driver");
+    public Service(WebDriver driver) {
+        this.driver = driver;
     }
 }
