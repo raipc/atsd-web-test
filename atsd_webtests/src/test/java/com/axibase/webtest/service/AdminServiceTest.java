@@ -12,6 +12,9 @@ import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 
 public class AdminServiceTest extends AtsdTest {
     private static final String[] NTP_SERVERS = new String[]{"us.pool.ntp.org", "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"};
@@ -20,25 +23,15 @@ public class AdminServiceTest extends AtsdTest {
 
     @Test
     public void checkAtsdTime() {
-        try {
-            Assert.assertTrue(generateAssertMessage("Time should be different not more 60 sec"), Math.abs(this.getCurrentTime() - this.getAtsdTime()) < MAX_DIFF_TIME);
-        } catch (AssertionError err) {
-            String filepath = AtsdTest.screenshotDir + "/" +
-                    this.getClass().getSimpleName() + "_" +
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
-                    System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
-            throw err;
-        }
-
+        assertTrue(generateAssertMessage("Time should be different not more 60 sec"), Math.abs(getCurrentTime() - getAtsdTime()) < MAX_DIFF_TIME);
     }
 
     private long getAtsdTime() {
-        Assert.assertEquals(this.generateAssertMessage("Should get login page"), LoginService.title, driver.getTitle());
+        assertEquals(generateAssertMessage("Should get login page"), LoginService.title, driver.getTitle());
         LoginService loginService = new LoginService(driver);
         loginService.login(login, password);
         driver.navigate().to(url + "/admin/system-information");
-        Assert.assertEquals("title should be System Information", "System Information", driver.getTitle());
+        assertEquals("title should be System Information", "System Information", driver.getTitle());
         AdminService adminService = new AdminService(driver);
         String atsdDateString = adminService.getTime();
         try {
@@ -57,7 +50,6 @@ public class AdminServiceTest extends AtsdTest {
         client.setDefaultTimeout(WAIT_FOR_SERVER_RESPONSE);
         try {
             client.open();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM dd yyyy HH:mm:ss.SSS zzz");
             for (String server : NTP_SERVERS) {
                 try {
                     InetAddress ioe = InetAddress.getByName(server);

@@ -8,12 +8,13 @@ import org.junit.BeforeClass;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Created by sild on 03.02.15.
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SuiteClasses({
         AdminServiceTest.class,
         EntitiesServiceTest.class,
         ExportServiceTest.class,

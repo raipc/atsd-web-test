@@ -2,10 +2,7 @@ package com.axibase.webtest.cases;
 
 import com.axibase.webtest.service.AtsdTest;
 import com.axibase.webtest.service.AccountService;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -32,7 +29,6 @@ public class CreateUserGroupTest extends AtsdTest {
     @Test
     public void createUserGroup() {
         try {
-
             driver.navigate().to(url);
 
             driver.findElement(By.xpath("//a/span[normalize-space(text())='Settings']/..")).click();
@@ -41,6 +37,7 @@ public class CreateUserGroupTest extends AtsdTest {
 
             driver.findElement(By.xpath("//a[normalize-space(text())='User Groups']")).click();
             Assert.assertEquals(generateAssertMessage("Title should be 'User Groups'"), "User Groups", driver.getTitle());
+
 
             driver.findElement(By.xpath("//a[@href='/admin/users/groups/edit.xhtml']")).click();
             Assert.assertEquals(generateAssertMessage("Title should be 'New User Group'"), "New User Group", driver.getTitle());
@@ -93,20 +90,13 @@ public class CreateUserGroupTest extends AtsdTest {
             driver.findElement(By.cssSelector("a[href='#portal-permissions']")).click();
             WebElement firstPortalCheckbox = driver.findElement(By.id("portalPermissionsModels0.accessGranted"));
             Assert.assertTrue(generateAssertMessage("Check box for first portal should be enabled"), firstPortalCheckbox.isSelected());
-
-        } catch (Throwable err) {
-            String filepath = AtsdTest.screenshotDir + "/" + this.getClass().getSimpleName() + "_"
-                    + Thread.currentThread().getStackTrace()[1].getMethodName() + "_" + System.currentTimeMillis()
-                    + ".png";
-            this.saveScreenshot(filepath);
-            throw err;
+        } catch (Throwable e) {
+            throw e; // Error should be processed by ActionOnTestState to take screenshot
+        } finally { // Instead of @After method
+            // Configure ATSD as it was before test
+            driver.navigate().to(url + "/admin/users/edit.xhtml?user=" + testUser);
+            as.deleteUser(testUser);
         }
-    }
-
-    @After
-    public void deleteTestUser() {
-        driver.navigate().to(url + "/admin/users/edit.xhtml?user=" + testUser);
-        as.deleteUser(testUser);
     }
 }
 
