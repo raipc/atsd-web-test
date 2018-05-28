@@ -1,5 +1,6 @@
 package com.axibase.webtest.service;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.openqa.selenium.WebDriver;
 
@@ -22,7 +23,8 @@ public class AtsdTest {
     @Rule
     public final ActionOnTestState action = new ActionOnTestState();
 
-    public AtsdTest() {
+    @BeforeClass
+    public static void readConfig() {
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(new File(propertypath)));
@@ -66,21 +68,16 @@ public class AtsdTest {
         return message;
     }
 
-    protected void login() {
-        try {
-            if (driver.getTitle().equals(LoginService.title)) {
-                LoginService ls = new LoginService(driver);
-                if (ls.login(login, password)) {
-                    driver.navigate().to(url);
-                } else {
-                    throw new Exception("Can't login");
-                }
+    protected void login() throws Exception {
+        if (driver.getTitle().equals(LoginService.title)) {
+            LoginService ls = new LoginService(driver);
+            if (ls.login(login, password)) {
+                driver.navigate().to(url);
             } else {
-                throw new Exception("Expected title is '" + LoginService.title + "' but there is '" + driver.getTitle());
+                throw new Exception("Can't login");
             }
-        } catch (Exception err) {
-            action.takeScreenshot("AtsdTest_"+ "login");
-            throw new RuntimeException(err);
+        } else {
+            throw new Exception("Expected title is '" + LoginService.title + "' but there is '" + driver.getTitle());
         }
     }
 }

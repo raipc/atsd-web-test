@@ -15,7 +15,7 @@ import java.util.List;
 public class CreatePortalTest extends AtsdTest {
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         login();
     }
 

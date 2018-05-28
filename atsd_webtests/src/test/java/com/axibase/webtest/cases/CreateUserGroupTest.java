@@ -16,7 +16,7 @@ public class CreateUserGroupTest extends AtsdTest {
     private AccountService as;
 
     @Before
-    public void createTestUser() {
+    public void createTestUser() throws Exception {
         login();
         driver.navigate().to(url + "/admin/users/edit.xhtml");
         as = new AccountService(AtsdTest.driver);
