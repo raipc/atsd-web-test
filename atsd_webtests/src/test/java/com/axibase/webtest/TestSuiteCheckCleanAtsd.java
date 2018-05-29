@@ -1,6 +1,6 @@
 package com.axibase.webtest;
 
-import com.axibase.webtest.cases.CreateEntityAndMetriclTest;
+import com.axibase.webtest.cases.CreateEntityAndMetricTest;
 import com.axibase.webtest.cases.CreatePortalTest;
 import com.axibase.webtest.cases.CreateUserGroupTest;
 import com.axibase.webtest.service.*;
@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
         ExportServiceTest.class,
         LoginServiceTest.class,
         MetricsServiceTest.class,
-        CreateEntityAndMetriclTest.class,
+        CreateEntityAndMetricTest.class,
         CreatePortalTest.class,
         CreateUserGroupTest.class
 })

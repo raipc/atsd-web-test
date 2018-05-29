@@ -26,7 +26,7 @@ public class AccountServiceTest extends AtsdTest {
     public void createUser() {
         try {
             if (!driver.getTitle().equals("Login")) {
-                System.out.println("Try to create admin...");
+                System.out.println("Trying to create admin...");
                 assertEquals(generateAssertMessage("Should get page with title 'Create Account'"), AtsdTest.driver.getTitle(), "Create Account");
                 assertTrue(generateAssertMessage("Can't create account"), as.createUser(AtsdTest.login, AtsdTest.password));
                 URL url = new URL(AtsdTest.driver.getCurrentUrl());
@@ -43,7 +43,7 @@ public class AccountServiceTest extends AtsdTest {
     public void deleteUser() throws Exception {
 
         if (!driver.getTitle().equals("Login")) {
-            System.out.println("Try to create admin...");
+            System.out.println("Trying to create admin...");
             as.createUser(AtsdTest.login, AtsdTest.password);
         } else {
             login();

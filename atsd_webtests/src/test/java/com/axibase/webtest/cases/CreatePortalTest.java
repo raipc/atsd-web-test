@@ -12,6 +12,10 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 public class CreatePortalTest extends AtsdTest {
 
     @Before
@@ -23,10 +27,10 @@ public class CreatePortalTest extends AtsdTest {
     public void createPortal() {
         driver.findElement(By.xpath("//a[normalize-space(text())='Portals']")).click();
         boolean panelVisible = driver.findElement(By.xpath("//h4[normalize-space(text())='Portals']")).isDisplayed();
-        Assert.assertTrue(generateAssertMessage("Portal panel should be visible"), panelVisible);
+        assertTrue(generateAssertMessage("Portal panel should be visible"), panelVisible);
 
         driver.findElement(By.xpath("//a[normalize-space(text())='Create']")).click();
-        Assert.assertEquals(generateAssertMessage("Title should be 'New Portal'"), "New Portal", AtsdTest.driver.getTitle());
+        assertEquals(generateAssertMessage("Title should be 'New Portal'"), "New Portal", driver.getTitle());
 
         driver.findElement(By.id("name")).sendKeys("Test Portal");
         String config = "[configuration]\\n" +
@@ -51,16 +55,16 @@ public class CreatePortalTest extends AtsdTest {
 
         ((JavascriptExecutor) driver).executeScript("document.querySelector('.CodeMirror').CodeMirror.setValue('" + config + "');");
         driver.findElement(By.id("save-button")).click();
-        Assert.assertEquals(generateAssertMessage("Title should be 'Portal Test Portal'"), "Portal Test Portal", AtsdTest.driver.getTitle());
+        assertEquals(generateAssertMessage("Title should be 'Portal Test Portal'"), "Portal Test Portal", driver.getTitle());
         driver.findElement(By.id("view-button")).click();
         driver.findElement(By.id("view-name-button")).click();
         List<String> tabs = new ArrayList<>(driver.getWindowHandles());
-        Assert.assertEquals(generateAssertMessage("Exactly 2 new tabs must be opened"), 3, tabs.size());
+        assertEquals(generateAssertMessage("Exactly 2 new tabs must be opened"), 3, tabs.size());
 
         for (int i = 1; i < tabs.size(); i++) {
             driver.switchTo().window(tabs.get(i));
             List<WebElement> widgets = driver.findElements(By.className("widget"));
-            Assert.assertNotEquals(generateAssertMessage("No widgets for portal"), 0, widgets.size());
+            assertNotEquals(generateAssertMessage("No widgets for portal"), 0, widgets.size());
             driver.close();
         }
         driver.switchTo().window(tabs.get(0));

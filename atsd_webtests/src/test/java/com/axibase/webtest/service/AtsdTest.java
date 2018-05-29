@@ -13,7 +13,8 @@ import java.util.Properties;
  * Created by sild on 02.02.15.
  */
 public class AtsdTest {
-    protected static WebDriver driver = null;
+
+    protected static WebDriver driver;
     protected static final String propertypath = "atsd.properties";
     protected static String login;
     protected static String password;

@@ -46,7 +46,7 @@ public class ActionOnTestState extends TestWatcher {
 //        System.setProperty("webdriver.chrome.driver", "/opt/chromedriver/chromedriver");
 //        dcap.setCapability("chrome.switches", Lists.newArrayList("--homepage=about:blank",
 //                "--no-first-run"));
-        if (AtsdTest.driver == null) {
+        if (AtsdTest.driver == null) { // driver = null for ExportServiceTest methods
             AtsdTest.driver = new PhantomJSDriver(dcap);
             AtsdTest.driver.manage().window().setSize(new Dimension(1280, 720));
 //            driver = new ChromeDriver(dcap);

@@ -23,12 +23,12 @@ public class ExportServiceTest extends AtsdTest {
         String uri = "/export?settings=%7B%22m%22%3A%22jvm_memory_used_percent%22%2C%22si%22%3A%225-MINUTE%22%2C%22t%22%3A%22HISTORY%22%2C%22f%22%3A%22CSV%22%2C%22np%22%3A-1%2C%22v%22%3Afalse%2C%22tf%22%3A%22LOCAL%22%2C%22ms%22%3Afalse%2C%22ro%22%3Afalse%2C%22te%22%3A%5B%5D%2C%22am%22%3Afalse%7D";
         driver.quit();//will use htmlwebdriver instead of phantomjs for this test
         driver = new HtmlUnitDriver();
-        driver.navigate().to(AtsdTest.url);
+        driver.navigate().to(url);
         assertEquals(generateAssertMessage("Should get login page"), driver.getTitle(), LoginService.title);
-        LoginService ls = new LoginService(AtsdTest.driver);
-        ls.login(AtsdTest.login, AtsdTest.password);
-        driver.navigate().to(AtsdTest.url + uri);
-        String[] src = AtsdTest.driver.getPageSource().split("\n");
+        LoginService ls = new LoginService(driver);
+        ls.login(login, password);
+        driver.navigate().to(url + uri);
+        String[] src = driver.getPageSource().split("\n");
         String head = src[0];
         String body = src[1];
         assertTrue("Csv file is incorrect", head.trim().equals("Timestamp,Value,Metric,Entity,host") && body.contains("jvm_memory_used_percent"));

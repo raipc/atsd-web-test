@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 
 
 public class AdminServiceTest extends AtsdTest {
+
     private static final String[] NTP_SERVERS = new String[]{"us.pool.ntp.org", "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"};
     private static final long MAX_DIFF_TIME = 60000;
     private static final int WAIT_FOR_SERVER_RESPONSE = 5000;
