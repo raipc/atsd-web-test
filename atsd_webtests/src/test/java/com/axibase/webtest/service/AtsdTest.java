@@ -29,7 +29,6 @@ abstract public class AtsdTest {
     protected static String password;
     protected static String url;
     protected static String screenshotDir;
-    protected static String replacementXml;
 
     @BeforeClass
     public static void readConfig() {
@@ -40,8 +39,7 @@ abstract public class AtsdTest {
             login = properties.getProperty("login");
             password = properties.getProperty("password");
             screenshotDir = properties.getProperty("screenshot_directory");
-            replacementXml = properties.getProperty("replacement_xml");
-            if (null == url || null == login || null == password || null == screenshotDir || null == replacementXml) {
+            if (null == url || null == login || null == password || null == screenshotDir) {
                 System.out.println("Can't read required properties");
                 System.exit(1);
             }
