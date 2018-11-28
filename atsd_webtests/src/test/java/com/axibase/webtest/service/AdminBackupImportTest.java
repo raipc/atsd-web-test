@@ -10,31 +10,30 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 
 @RunWith(value = Parameterized.class)
 public class AdminBackupImportTest extends AtsdTest {
 
     private String testFile;
+    private String[][] expectedResult = {
+            {"data-availability-json", "JSON", "Tommy Crow"},
+            {"graphql-queries", "GRAPHQL", "Tommy Crow"},
+            {"stickers", "LIST", ""},
+            {"test-after-new-editor-release-1", "SQL", "Tory Eagle"},
+            {"test-text", "TEXT", "Tony Bluejay"}};
 
-    public AdminBackupImportTest(String file){
+    public AdminBackupImportTest(String file) {
         testFile = file;
     }
 
     @Parameterized.Parameters(name = "{index} {0}")
-    public static Collection<Object[]> data() throws IOException{
-        Properties testProperties = new Properties();
-        testProperties.load(new FileInputStream(new File(AdminBackupImportTest.class.getClassLoader().getResource("test.properties").getFile())));
-
-        Object[][] data = new Object[][]{{testProperties.getProperty("file_xml")},
-                {testProperties.getProperty("archive_zip")}, {testProperties.getProperty("archive_tar")},
-                {testProperties.getProperty("archive_bz2")}, {testProperties.getProperty("archive_gz")}};
+    public static Collection<Object[]> data() {
+        Object[][] data = new Object[][]{{"./src/test/resources/replacement-tables.xml"},
+                {"./src/test/resources/arc1.zip"}, {"./src/test/resources/arc1.tar"},
+                {"./src/test/resources/arc1.tar.bz2"}, {"./src/test/resources/arc1.tar.gz"}};
 
         return Arrays.asList(data);
     }
@@ -42,72 +41,76 @@ public class AdminBackupImportTest extends AtsdTest {
     @Before
     public void setUp() {
         login();
+        goToAdminImportBackupPage();
     }
 
     @Test
     public void testImportDataImportBackupPage() {
-        goToAdminImportBackupPage();
-
-        sendFilesOnAdminImportBackup(false, false, testFile);
+        setReplaceExisting(false);
+        setAutoEnable(false);
+        sendFilesOnAdminImportBackup(testFile);
 
         goToReplacementTablesPage();
 
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable")), expectedResult()));
-
-        deleteReplacementTables();
+                checkTable(driver.findElement(By.id("overviewTable"))));
     }
 
     @Test
     public void testImportDataImportBackupPageWithReplace() {
-        goToAdminImportBackupPage();
+        setReplaceExisting(false);
+        setAutoEnable(false);
+        sendFilesOnAdminImportBackup(testFile);
 
-        sendFilesOnAdminImportBackup(false, false, testFile);
-        sendFilesOnAdminImportBackup(true, false, testFile);
+        setReplaceExisting(true);
+        setAutoEnable(false);
+        sendFilesOnAdminImportBackup(testFile);
 
         goToReplacementTablesPage();
 
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable")), expectedResult()));
-
-        deleteReplacementTables();
+                checkTable(driver.findElement(By.id("overviewTable"))));
     }
 
     @Test
     public void testImportDataImportBackupPageWithAutoEnable() {
-        goToAdminImportBackupPage();
-
-        sendFilesOnAdminImportBackup(false, true, testFile);
+        setReplaceExisting(false);
+        setAutoEnable(true);
+        sendFilesOnAdminImportBackup(testFile);
 
         goToReplacementTablesPage();
 
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable")), expectedResult()));
+                checkTable(driver.findElement(By.id("overviewTable"))));
+    }
 
+    @After
+    public void cleanUp() {
         deleteReplacementTables();
     }
 
-    private String[][] expectedResult() {
-        return new String[][]{
-                {"data-availability-json", "JSON", "Tommy Crow"},
-                {"graphql-queries", "GRAPHQL", "Tommy Crow"},
-                {"stickers", "LIST", ""},
-                {"test-after-new-editor-release-1", "SQL", "Tory Eagle"},
-                {"test-text", "TEXT", "Tony Bluejay"}
-        };
-    }
-
-    private void sendFilesOnAdminImportBackup(boolean replaceExisting, boolean autoEnable, String... files) {
+    private void sendFilesOnAdminImportBackup(String file) {
         WebElement putTable = driver.findElement(By.id("putTable"));
         WebElement inputFile = putTable.findElement(By.xpath(".//input[@type='file']"));
         WebElement submitButton = driver.findElement(By.xpath(".//input[@type='submit']"));
 
-        setCheckbox(putTable.findElement(By.id("replaceExisting")), replaceExisting);
-        setCheckbox(putTable.findElement(By.id("autoEnable")), autoEnable);
-
-        ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('multiple')", inputFile);
-        inputFile.sendKeys(files);
+        removeMultipleTag(inputFile);
+        inputFile.sendKeys(file);
         submitButton.click();
+    }
+
+    // This function was created in need to avoid PhantomJS  multiple input bug
+    // Function perform javascript on page to remove 'multiple' attribute from input element
+    private void removeMultipleTag(WebElement inputFile) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('multiple')", inputFile);
+    }
+
+    private void setReplaceExisting(boolean on) {
+        setCheckbox(driver.findElement(By.id("replaceExisting")), on);
+    }
+
+    private void setAutoEnable(boolean on) {
+        setCheckbox(driver.findElement(By.id("autoEnable")), on);
     }
 
     private void goToReplacementTablesPage() {
@@ -118,11 +121,11 @@ public class AdminBackupImportTest extends AtsdTest {
 
     private void goToAdminImportBackupPage() {
         Actions action = new Actions(driver);
-        action.moveToElement(
-                driver.findElement(By.xpath("//*/a/span[contains(text(),'Settings')]"))).click().
-                moveToElement(driver.findElement(By.xpath("//*/a[contains(text(),'Diagnostics')]"))).
-                moveToElement(driver.findElement(By.xpath("//*/a[contains(text(),'Backup Import')]"))).
-                click().build().perform();
+
+        action.moveToElement(driver.findElement(By.xpath("//*/a/span[contains(text(),'Settings')]"))).click();
+        action.moveToElement(driver.findElement(By.xpath("//*/a[contains(text(),'Diagnostics')]")));
+        action.moveToElement(driver.findElement(By.xpath("//*/a[contains(text(),'Backup Import')]"))).click();
+        action.build().perform();
 
         Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/admin/import-backup");
     }
@@ -139,17 +142,16 @@ public class AdminBackupImportTest extends AtsdTest {
     }
 
     private void setCheckbox(WebElement webElement, boolean on) {
-        if (on) {
-            if (!webElement.isSelected())
-                webElement.click();
-        } else if (webElement.isSelected())
+        if (on != webElement.isSelected()) {
             webElement.click();
+        }
     }
 
-    private boolean checkTable(WebElement table, String[][] expectedResult) {
+    private boolean checkTable(WebElement table) {
         List<WebElement> findElements = table.findElements(By.xpath("./tbody/tr"));
-        if (findElements.size() != expectedResult.length)
+        if (findElements.size() != expectedResult.length) {
             return false;
+        }
 
         for (int i = 0; i < findElements.size(); i++) {
             List<WebElement> tdList = findElements.get(i).findElements(By.xpath("./td"));
