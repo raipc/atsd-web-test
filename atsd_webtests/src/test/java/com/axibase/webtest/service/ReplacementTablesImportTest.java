@@ -6,11 +6,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.util.List;
 
 public class ReplacementTablesImportTest extends AtsdTest {
 
-    private static String fileXml = "./src/test/resources/replacement-tables.xml";
+    private static String fileXml = ReplacementTablesImportTest.class.getResource("replacement-table" + File.separator + "xml-file.xml").getFile();
 
     private String[][] expectedResult = {
             {"data-availability-json", "JSON", "Tommy Crow"},

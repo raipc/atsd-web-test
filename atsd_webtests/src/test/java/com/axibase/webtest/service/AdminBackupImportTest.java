@@ -10,6 +10,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,9 +32,12 @@ public class AdminBackupImportTest extends AtsdTest {
 
     @Parameterized.Parameters(name = "{index} {0}")
     public static Collection<Object[]> data() {
-        Object[][] data = new Object[][]{{"./src/test/resources/replacement-tables.xml"},
-                {"./src/test/resources/arc1.zip"}, {"./src/test/resources/arc1.tar"},
-                {"./src/test/resources/arc1.tar.bz2"}, {"./src/test/resources/arc1.tar.gz"}};
+        Object[][] data = new Object[][]{
+                {AdminBackupImportTest.class.getResource("replacement-table" + File.separator + "xml-file.xml").getFile()},
+                {AdminBackupImportTest.class.getResource("replacement-table" + File.separator + "zip-archive.zip").getFile()},
+                {AdminBackupImportTest.class.getResource("replacement-table" + File.separator + "tar-archive.tar").getFile()},
+                {AdminBackupImportTest.class.getResource("replacement-table" + File.separator + "bz2-archive.tar.bz2").getFile()},
+                {AdminBackupImportTest.class.getResource("replacement-table" + File.separator + "gz-archive.tar.gz").getFile()}};
 
         return Arrays.asList(data);
     }
@@ -155,8 +159,7 @@ public class AdminBackupImportTest extends AtsdTest {
 
         for (int i = 0; i < findElements.size(); i++) {
             List<WebElement> tdList = findElements.get(i).findElements(By.xpath("./td"));
-            if (!tdList.get(0).getAttribute("class").equals("select-field") &&
-                    !tdList.get(1).getText().equals(expectedResult[i][0]) &&
+            if (!tdList.get(1).getText().equals(expectedResult[i][0]) &&
                     !tdList.get(2).getText().equals(expectedResult[i][1]) &&
                     !tdList.get(3).getText().equals(expectedResult[i][2]))
                 return false;
