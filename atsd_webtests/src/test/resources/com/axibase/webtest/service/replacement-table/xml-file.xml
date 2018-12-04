@@ -1,0 +1,146 @@
+<list>
+  <com.axibase.tsd.model.ReplacementTable>
+    <lookupName>data-availability-json</lookupName>
+    <items>aws_ebs=[{\
+    &quot;entity&quot;: &quot;vol-4680a2aa&quot;,\
+    &quot;metric&quot;: &quot;aws_ebs.volumebusy_percent&quot;,\
+    &quot;endDate&quot;: &quot;2015-12-15T00:00:00Z&quot;,\
+    &quot;interval&quot;: { &quot;count&quot;: 2, &quot;unit&quot;: &quot;HOUR&quot; },\
+    &quot;requestId&quot;: &quot;http://apps.axibase.com/chartlab/e8977b4a&quot;,\
+    &quot;limit&quot;: 1,\
+    &quot;seriesLimit&quot;: 1\
+}]
+aix_nmon=[{\
+    &quot;entity&quot;: &quot;nurswgvml0023&quot;,\
+    &quot;metric&quot;: &quot;nmon.cpu_total.busy%&quot;,\
+    &quot;endDate&quot;: &quot;2015-09-16T01:00:00Z&quot;,\
+    &quot;interval&quot;: { &quot;count&quot;: 2, &quot;unit&quot;: &quot;HOUR&quot; },\
+    &quot;requestId&quot;: &quot;http://axibase.com/chartlab/b69e4fcd&quot;,\
+    &quot;limit&quot;: 1,\
+    &quot;seriesLimit&quot;: 1    \
+}]
+scom.server.processor=[{\
+    &quot;entity&quot;: &quot;nurswgvmw016&quot;,\
+    &quot;metric&quot;: &quot;scom.server.processor_information.%_processor_time&quot;,\
+    &quot;endDate&quot;: &quot;now - 8 * hour&quot;,\
+    &quot;interval&quot;: { &quot;count&quot;: 4, &quot;unit&quot;: &quot;DAY&quot; },\
+    &quot;requestId&quot;: &quot;http://apps.axibase.com/chartlab/693b4f8d&quot;,\
+    &quot;limit&quot;: 1,\
+    &quot;seriesLimit&quot;: 1    \
+}]</items>
+    <format>JSON</format>
+    <author>Tommy Crow</author>
+  </com.axibase.tsd.model.ReplacementTable>
+  <com.axibase.tsd.model.ReplacementTable>
+    <lookupName>graphql-queries</lookupName>
+    <items>issue-list=query { \
+	organization(login: &quot;axibase&quot;) {\
+        repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {\
+        nodes {\
+            #name\
+            pullRequests(\
+				  labels:[&quot;done&quot;],\
+				  first: 15, \
+				  states: OPEN, \
+				  orderBy: {field: UPDATED_AT, direction: DESC}\
+				) {\
+                nodes {\
+                    headRepository { nameWithOwner }\
+                    url\
+                    author {\
+                    ... on User {\
+                        login name\
+                        }\
+                    }       \
+                    mergeable\
+                    baseRefName\
+                    headRefName\
+                    title\
+                    #milestone { title }\
+                    labels(first: 3) { nodes{name} }\
+                    ... on PullRequest {\
+                        pullRequestcommits: commits(last: 1) {\
+                            #totalCount	\
+                            nodes {\
+                                commit {\
+                                    #url \
+                                    status { state contexts { context description createdAt targetUrl } }\
+                                }\
+                            }\
+                        }\
+                    }\
+                }\
+            } \
+        }      \
+    }\
+  }\
+}
+issue-all=query { \
+	organization(login: &quot;axibase&quot;) {\
+        repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {\
+        nodes {\
+            #name\
+            pullRequests(\
+				  first: 15, \
+				  states: OPEN, \
+				  orderBy: {field: UPDATED_AT, direction: DESC}\
+				) {\
+                nodes {\
+                    headRepository { nameWithOwner }\
+                    url\
+                    author {\
+                    ... on User {\
+                        login name\
+                        }\
+                    }       \
+                    mergeable\
+                    baseRefName\
+                    headRefName\
+                    title\
+                    #milestone { title }\
+                    labels(first: 3) { nodes{name} }\
+                    ... on PullRequest {\
+                        pullRequestcommits: commits(last: 1) {\
+                            #totalCount	\
+                            nodes {\
+                                commit {\
+                                    #url \
+                                    status { state contexts { context description createdAt targetUrl } }\
+                                }\
+                            }\
+                        }\
+                    }\
+                }\
+            } \
+        }      \
+    }\
+  }\
+}</items>
+    <format>GRAPHQL</format>
+    <author>Tommy Crow</author>
+  </com.axibase.tsd.model.ReplacementTable>
+  <com.axibase.tsd.model.ReplacementTable>
+    <lookupName>stickers</lookupName>
+    <items>scared_cat=CAADAgADAwYAAhhC7gjK_3dXMvY2eAI
+dog_pizza=CAADAgADvwYAAhhC7ghe2cAw5NKMPQI
+kumamon_chicken=CAADAgADcwMAAn-zKAuAcgXiDY5-rgI
+leo-chicken=CAADAgADdQMAAj-VzArKSWXuB0fxoAI
+meow_pizza=CAADAgADAgAD2DkjC9s5OJ989y9QAg
+lunch_seal=CAADAgADDQADrGgUFNcMftNBPwfOAg</items>
+    <format>LIST</format>
+  </com.axibase.tsd.model.ReplacementTable>
+  <com.axibase.tsd.model.ReplacementTable>
+    <lookupName>test-after-new-editor-release-1</lookupName>
+    <items>Hello=World
+Echo=off</items>
+    <format>SQL</format>
+    <author>Tory Eagle</author>
+  </com.axibase.tsd.model.ReplacementTable>
+  <com.axibase.tsd.model.ReplacementTable>
+    <lookupName>test-text</lookupName>
+    <items>key1=12345
+key2=123456</items>
+    <format>TEXT</format>
+    <author>Tony Bluejay</author>
+  </com.axibase.tsd.model.ReplacementTable>
+</list>
