@@ -108,11 +108,11 @@ public class ReplacementTablesImportTest extends AtsdTest {
 
         for (int i = 0; i < findElements.size(); i++) {
             List<WebElement> tdList = findElements.get(i).findElements(By.xpath("./td"));
-            if (!tdList.get(0).getAttribute("class").equals("select-field") &&
-                    !tdList.get(1).getText().equals(expectedResult[i][0]) &&
+            if (!tdList.get(1).getText().equals(expectedResult[i][0]) &&
                     !tdList.get(2).getText().equals(expectedResult[i][1]) &&
-                    !tdList.get(3).getText().equals(expectedResult[i][2]))
+                    !tdList.get(3).getText().equals(expectedResult[i][2])) {
                 return false;
+            }
         }
 
         return true;

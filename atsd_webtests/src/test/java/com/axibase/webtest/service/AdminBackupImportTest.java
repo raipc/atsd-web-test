@@ -161,8 +161,9 @@ public class AdminBackupImportTest extends AtsdTest {
             List<WebElement> tdList = findElements.get(i).findElements(By.xpath("./td"));
             if (!tdList.get(1).getText().equals(expectedResult[i][0]) &&
                     !tdList.get(2).getText().equals(expectedResult[i][1]) &&
-                    !tdList.get(3).getText().equals(expectedResult[i][2]))
+                    !tdList.get(3).getText().equals(expectedResult[i][2])) {
                 return false;
+            }
         }
 
         return true;
