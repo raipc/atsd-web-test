@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 /**
  * Created by sild on 30.01.15.
  */
@@ -26,7 +28,12 @@ public class AccountService extends Service {
 
     public boolean deleteUser(String login) {
         if (driver.getTitle().equals("User " + login)) {
-            driver.findElement(By.name("delete")).click();
+            final WebElement deleteButton = driver.findElement(By.name("delete"));
+            final List<WebElement> dropdownToggle = deleteButton.findElements(By.xpath("../../../button[@data-toggle='dropdown']"));
+            if (dropdownToggle.size() > 0) {
+                dropdownToggle.get(0).click();
+            }
+            deleteButton.click();
             WebElement yes;
             // Waiting for the confirmation window to be loaded
             do {
