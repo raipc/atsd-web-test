@@ -4,6 +4,7 @@ package com.axibase.webtest.service;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.io.File;
@@ -19,18 +20,20 @@ public class ExportServiceTest extends AtsdTest {
         String uri = "/export?settings=%7B%22m%22%3A%22jvm_memory_used_percent%22%2C%22si%22%3A%225-MINUTE%22%2C%22t%22%3A%22HISTORY%22%2C%22f%22%3A%22CSV%22%2C%22np%22%3A-1%2C%22v%22%3Afalse%2C%22tf%22%3A%22LOCAL%22%2C%22ms%22%3Afalse%2C%22ro%22%3Afalse%2C%22te%22%3A%5B%5D%2C%22am%22%3Afalse%7D";
         AtsdTest.driver.quit();//will use htmlwebdriver instead of phantomjs for this test
         AtsdTest.driver = new HtmlUnitDriver();
-        AtsdTest.driver.navigate().to(AtsdTest.url);
-        Assert.assertEquals(this.generateAssertMessage("Should get login page"), driver.getTitle(), LoginService.title);
-        LoginService ls = new LoginService(AtsdTest.driver);
-        ls.login(AtsdTest.login, AtsdTest.password);
-        AtsdTest.driver.navigate().to(AtsdTest.url + uri);
-        String[] src = AtsdTest.driver.getPageSource().split("\n");
-        String head = src[0];
-        String body = src[1];
-        Assert.assertTrue("Csv file is incorrect", head.trim().equals("Timestamp,Value,Metric,Entity,host") && body.contains("jvm_memory_used_percent"));
-        AtsdTest.driver.quit();
-        AtsdTest.driver = null;
-
+        try {
+            AtsdTest.driver.navigate().to(AtsdTest.url);
+            Assert.assertEquals(this.generateAssertMessage("Should get login page"), driver.getTitle(), LoginService.title);
+            LoginService ls = new LoginService(AtsdTest.driver);
+            ls.login(AtsdTest.login, AtsdTest.password);
+            AtsdTest.driver.navigate().to(AtsdTest.url + uri);
+            String[] src = AtsdTest.driver.getPageSource().split("\n");
+            String head = src[0];
+            String body = src[1];
+            Assert.assertTrue("Csv file is incorrect", head.trim().equals("Timestamp,Value,Metric,Entity,host") && body.contains("jvm_memory_used_percent"));
+        } finally {
+            AtsdTest.driver.quit();
+            AtsdTest.driver = null;
+        }
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.axibase.webtest.service;
 
 
+import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -9,9 +10,8 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +29,7 @@ abstract public class AtsdTest {
     protected static String password;
     protected static String url;
     protected static String screenshotDir;
+    private static String chromedriverPath;
 
     @BeforeClass
     public static void readConfig() {
@@ -39,6 +40,7 @@ abstract public class AtsdTest {
             login = properties.getProperty("login");
             password = properties.getProperty("password");
             screenshotDir = properties.getProperty("screenshot_directory");
+            chromedriverPath = properties.getProperty("webdriver.chrome.driver");
             if (null == url || null == login || null == password || null == screenshotDir) {
                 System.out.println("Can't read required properties");
                 System.exit(1);
@@ -64,17 +66,14 @@ abstract public class AtsdTest {
 
     @Before
     public void init() {
-        DesiredCapabilities dcap = new DesiredCapabilities();
-        String[] phantomArgs = new String[]{"--webdriver-loglevel=WARN"};
-        dcap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
-//
-//        System.setProperty("webdriver.chrome.driver", "/opt/chromedriver/chromedriver");
-//        dcap.setCapability("chrome.switches", Lists.newArrayList("--homepage=about:blank",
-//                "--no-first-run"));
+        System.setProperty("webdriver.chrome.driver", chromedriverPath);
+        ChromeOptions opts = new ChromeOptions();
+        opts.addArguments("--headless");
+        opts.addArguments("--window-size=1280,720");
+
         if (driver == null) {
-            driver = new PhantomJSDriver(dcap);
+            driver = new ChromeDriver(opts);
             driver.manage().window().setSize(new Dimension(1280, 720));
-//            driver = new ChromeDriver(dcap);
             driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
             driver.navigate().to(url);
         }
