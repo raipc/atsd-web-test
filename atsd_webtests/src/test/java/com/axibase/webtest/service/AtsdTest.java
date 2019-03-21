@@ -1,7 +1,6 @@
 package com.axibase.webtest.service;
 
 
-import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -45,11 +44,6 @@ abstract public class AtsdTest {
                 System.out.println("Can't read required properties");
                 System.exit(1);
             }
-
-            String phantomjsBinary = properties.getProperty("phantomjs.binary.path");
-            if (phantomjsBinary != null) {
-                System.setProperty("phantomjs.binary.path", phantomjsBinary);
-            }
         } catch (IOException e) {
             System.out.println("Can't read property file");
             e.printStackTrace();
@@ -63,12 +57,12 @@ abstract public class AtsdTest {
         }
     }
 
-
     @Before
     public void init() {
         System.setProperty("webdriver.chrome.driver", chromedriverPath);
         ChromeOptions opts = new ChromeOptions();
         opts.addArguments("--headless");
+        opts.addArguments("--no-sandbox");
         opts.addArguments("--window-size=1280,720");
 
         if (driver == null) {
@@ -95,9 +89,7 @@ abstract public class AtsdTest {
             currentUrl = driver.getCurrentUrl();
             pageSrc = driver.getPageSource();
         }
-        message += thread + "\n" +
-                "url: " + currentUrl + "\n" +
-                "page source:\n" + pageSrc;
+        message += thread + "\n" + "url: " + currentUrl + "\n" + "page source:\n" + pageSrc;
         return message;
     }
 
@@ -130,7 +122,5 @@ abstract public class AtsdTest {
         } catch (IOException e) {
             System.out.println("Can't save screenshot to '" + filepath + "'");
         }
-
     }
-
 }

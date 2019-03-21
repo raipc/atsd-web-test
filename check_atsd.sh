@@ -16,15 +16,15 @@ fi
 AXIBASE_REPO_FILE="/etc/apt/sources.list.d/axibase.list"
 PACKAGES_PATH="/tmp/packages"
 BASE_DIR=${BASE_DIR:-"/root/atsd-web-test"}
-
+BRANCH=${BRANCH:-master}
 
 function main {
     check_download_pages
     check_package_links
     check_repository_atsd_revision
+    pull_repository
     install_atsd
     check_installed_atsd_revision
-    pull_repository
     run_webtests
 }
 
@@ -144,8 +144,10 @@ function check_installed_atsd_revision {
 }
 
 function pull_repository {
-    echo "Pulling web tests"
     cd $BASE_DIR
+    echo "Using branch $BRANCH"
+    git fetch && git checkout -t origin/$BRANCH
+    echo "Pulling web tests"
     git pull
 }
 
