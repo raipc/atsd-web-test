@@ -31,7 +31,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
         goToCSVParsersPage();
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("configurationList"))));
+                checkParserAdd(driver.findElement(By.id("configurationList"))));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
         goToCSVParsersPage();
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("configurationList"))));
+                checkParserAdd(driver.findElement(By.id("configurationList"))));
     }
 
     @After
@@ -102,7 +102,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
         }
     }
 
-    private boolean checkTable(WebElement table) {
+    private boolean checkParserAdd(WebElement table) {
         List<WebElement> findElements = table.findElements(By.xpath("./tbody/tr"));
         if (findElements.size() != expectedResult.length) {
             return false;
