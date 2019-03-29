@@ -63,7 +63,7 @@ public class ExportServiceTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             System.out.println(err.toString());
             Assert.fail();
     }

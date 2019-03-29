@@ -1,13 +1,10 @@
 package com.axibase.webtest.service;
 
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -29,6 +26,8 @@ abstract public class AtsdTest {
     protected static String url;
     protected static String screenshotDir;
     private static String chromedriverPath;
+    protected static ScreenshotSaver screenshotSaver;
+
 
     @BeforeClass
     public static void readConfig() {
@@ -69,6 +68,7 @@ abstract public class AtsdTest {
             driver = new ChromeDriver(opts);
             driver.manage().window().setSize(new Dimension(1280, 720));
             driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            screenshotSaver = new ScreenshotSaver(driver);
             driver.navigate().to(url);
         }
     }
@@ -109,18 +109,8 @@ abstract public class AtsdTest {
             String filepath = AtsdTest.screenshotDir + "/" + this.getClass().getSimpleName() + "_"
                     + Thread.currentThread().getStackTrace()[1].getMethodName() + "_" + System.currentTimeMillis()
                     + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw new RuntimeException(err);
-        }
-    }
-
-    protected void saveScreenshot(String filepath) {
-        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        try {
-            FileUtils.copyFile(scrFile, new File(filepath), true);
-            System.out.println("screenshot saved to '" + filepath + "'");
-        } catch (IOException e) {
-            System.out.println("Can't save screenshot to '" + filepath + "'");
         }
     }
 }

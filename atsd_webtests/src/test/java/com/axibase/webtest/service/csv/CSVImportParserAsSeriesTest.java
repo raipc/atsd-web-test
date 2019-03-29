@@ -26,24 +26,42 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
     @Test
     public void testImportCSPParserPage() {
-        setReplaceExisting(false);
-        sendParserToTable(fileXml);
+        try {
+            setReplaceExisting(false);
+            sendParserToTable(fileXml);
 
-        goToCSVParsersPage();
-        Assert.assertTrue("Wrong table content",
-                checkParserAdd(driver.findElement(By.id("configurationList"))));
+            goToCSVParsersPage();
+            Assert.assertTrue("Wrong table content",
+                    checkParserAdd(driver.findElement(By.id("configurationList"))));
+        } catch (AssertionError err) {
+            String filepath = AtsdTest.screenshotDir + "/" +
+                    this.getClass().getSimpleName() + "_" +
+                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
+                    System.currentTimeMillis() + ".png";
+            screenshotSaver.saveScreenshot(filepath);
+            throw err;
+        }
     }
 
     @Test
     public void testImportCSPParserWithReplace() {
-        setReplaceExisting(false);
-        sendParserToTable(fileXml);
-        setReplaceExisting(true);
-        sendParserToTable(fileXml);
+        try {
+            setReplaceExisting(false);
+            sendParserToTable(fileXml);
+            setReplaceExisting(true);
+            sendParserToTable(fileXml);
 
-        goToCSVParsersPage();
-        Assert.assertTrue("Wrong table content",
-                checkParserAdd(driver.findElement(By.id("configurationList"))));
+            goToCSVParsersPage();
+            Assert.assertTrue("Wrong table content",
+                    checkParserAdd(driver.findElement(By.id("configurationList"))));
+        } catch (AssertionError err) {
+            String filepath = AtsdTest.screenshotDir + "/" +
+                    this.getClass().getSimpleName() + "_" +
+                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
+                    System.currentTimeMillis() + ".png";
+            screenshotSaver.saveScreenshot(filepath);
+            throw err;
+        }
     }
 
     @After

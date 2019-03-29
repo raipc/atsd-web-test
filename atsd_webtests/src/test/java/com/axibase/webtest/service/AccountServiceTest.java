@@ -37,7 +37,7 @@ public class AccountServiceTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         } catch (MalformedURLException err) {
             throw new AssertionError("Bad URL returned from Webdriver", err);
@@ -65,7 +65,7 @@ public class AccountServiceTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }

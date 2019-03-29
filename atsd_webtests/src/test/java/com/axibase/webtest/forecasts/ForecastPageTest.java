@@ -22,7 +22,7 @@ public class ForecastPageTest extends AtsdTest {
     public void setUp() {
         this.login();
 
-        if (isDataMissing){
+        if (isDataMissing) {
             importParser();
             importData();
             isDataMissing = false;
@@ -65,7 +65,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
 
@@ -90,7 +90,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
@@ -120,7 +120,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
 
@@ -137,7 +137,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
@@ -163,7 +163,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
 
@@ -191,7 +191,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
@@ -233,7 +233,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
@@ -255,7 +255,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
 
@@ -265,9 +265,9 @@ public class ForecastPageTest extends AtsdTest {
     public void testPresenceOfHistoryCharts() {
         try {
             driver.findElement(By.id("add-group-btn")).click();
-            setNumberParam("period-count","20");
-            setSelectionOption("aggregation","sum");
-            setSelectionOption("interpolation","prev");
+            setNumberParam("period-count", "20");
+            setSelectionOption("aggregation", "sum");
+            setSelectionOption("interpolation", "prev");
             driver.findElement(By.id("group-save-btn")).click();
 
             WebDriverWait wait = new WebDriverWait(driver, 15);
@@ -281,7 +281,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
@@ -302,7 +302,7 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
@@ -311,9 +311,9 @@ public class ForecastPageTest extends AtsdTest {
     public void testPresenceOfHistoryChartsInPic() {
         try {
             driver.findElement(By.id("add-group-btn")).click();
-            setNumberParam("period-count","20");
-            setSelectionOption("aggregation","sum");
-            setSelectionOption("interpolation","prev");
+            setNumberParam("period-count", "20");
+            setSelectionOption("aggregation", "sum");
+            setSelectionOption("interpolation", "prev");
             clickSubmitButton();
 
             int countInPic = driver.
@@ -330,24 +330,33 @@ public class ForecastPageTest extends AtsdTest {
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
                     System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
+            screenshotSaver.saveScreenshot(filepath);
             throw err;
         }
     }
 
     @Test
-    public void testNamesInSummary(){
-        driver.findElement(By.id("add-group-btn")).click();
-        driver.findElement(By.id("add-group-btn")).click();
-        driver.findElements(By.xpath("//*[@id='group-toggle-list']/li")).get(1).click();
-        driver.findElement(By.id("remove-group-btn")).click();
-        clickSubmitButton();
+    public void testNamesInSummary() {
+        try {
+            driver.findElement(By.id("add-group-btn")).click();
+            driver.findElement(By.id("add-group-btn")).click();
+            driver.findElements(By.xpath("//*[@id='group-toggle-list']/li")).get(1).click();
+            driver.findElement(By.id("remove-group-btn")).click();
+            clickSubmitButton();
 
-        String[] names = driver.findElement(By.id("group-toggle-list")).getText().split("\n");
-        List<WebElement> forecasts = driver.findElements(By.xpath("//*[@id='summary-container']/table/thead/tr/th"));
-        forecasts.remove(0);
-        for( int i=0;i<forecasts.size();i++){
-            assertTrue("Wrong name of forecast",forecasts.get(i).getText().contains(names[i]));
+            String[] names = driver.findElement(By.id("group-toggle-list")).getText().split("\n");
+            List<WebElement> forecasts = driver.findElements(By.xpath("//*[@id='summary-container']/table/thead/tr/th"));
+            forecasts.remove(0);
+            for (int i = 0; i < forecasts.size(); i++) {
+                assertTrue("Wrong name of forecast", forecasts.get(i).getText().contains(names[i]));
+            }
+        } catch (AssertionError err) {
+            String filepath = AtsdTest.screenshotDir + "/" +
+                    this.getClass().getSimpleName() + "_" +
+                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
+                    System.currentTimeMillis() + ".png";
+            screenshotSaver.saveScreenshot(filepath);
+            throw err;
         }
 
     }
@@ -385,7 +394,7 @@ public class ForecastPageTest extends AtsdTest {
     private void clickSubmitButton() {
         driver.findElement(By.id("group-save-btn")).click();
 
-        WebDriverWait wait = new WebDriverWait(driver, 15);
+        WebDriverWait wait = new WebDriverWait(driver, 20);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*/section[@id='summary-container']/table")));
     }
 
@@ -427,8 +436,8 @@ public class ForecastPageTest extends AtsdTest {
     }
 
     private void assertVisibility(String errorMessage, boolean isVisible, String elementId) {
-        if(driver.findElements(By.cssSelector(elementId)).size() != 0 ){
-            assertEquals(errorMessage,isVisible, driver.findElement(By.id(elementId)).isDisplayed());
+        if (driver.findElements(By.cssSelector(elementId)).size() != 0) {
+            assertEquals(errorMessage, isVisible, driver.findElement(By.id(elementId)).isDisplayed());
         }
     }
 
