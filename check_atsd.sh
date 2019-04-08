@@ -15,6 +15,7 @@ fi
 
 AXIBASE_REPO_FILE="/etc/apt/sources.list.d/axibase.list"
 PACKAGES_PATH="/tmp/packages"
+BASE_DIR=${BASE_DIR:-"/root/atsd-web-test"}
 
 
 function main {
@@ -23,13 +24,14 @@ function main {
     check_repository_atsd_revision
     install_atsd
     check_installed_atsd_revision
+    pull_repository
     run_webtests
 }
 
 DOWNLOAD_URL="https://axibase.com/public"
 
 function check_download_pages {
-    cd /root
+    cd $BASE_DIR
 
     debPage="atsd_deb_latest.htm"
     rmpPage="atsd_rpm_latest.htm"
@@ -66,7 +68,7 @@ function check_download_pages {
 }
 
 function check_package_links {
-    cd /root
+    cd $BASE_DIR
     
     minlen=200000000
     debFile="atsd_${ATSD_REQUIRED_REVISION}_amd64.deb"
@@ -104,7 +106,7 @@ function check_package_links {
 }
 
 function run_webtests {
-    cd /root/atsd_webtests
+    cd $BASE_DIR/atsd_webtests
     export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
     mvn --quiet test
 }
@@ -139,6 +141,12 @@ function check_installed_atsd_revision {
         echo "Installed Revision: $installedVersion"
         exit 2
     fi
+}
+
+function pull_repository {
+    echo "Pulling web tests"
+    cd $BASE_DIR
+    git pull
 }
 
 main "$@"

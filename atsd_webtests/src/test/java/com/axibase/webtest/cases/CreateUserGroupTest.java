@@ -41,9 +41,8 @@ public class CreateUserGroupTest extends AtsdTest {
             driver.findElement(By.xpath("//a[normalize-space(text())='User Groups']")).click();
             assertEquals(generateAssertMessage("Title should be 'User Groups'"), "User Groups", driver.getTitle());
 
-
-            driver.findElement(By.xpath("//a[@href='/admin/users/groups/edit.xhtml']")).click();
-            assertEquals(generateAssertMessage("Title should be 'New User Group'"), "New User Group", driver.getTitle());
+            driver.findElement(By.xpath("//form//a[normalize-space(text())='Create']")).click();
+            Assert.assertEquals(generateAssertMessage("Title should be 'New User Group'"), "New User Group", driver.getTitle());
 
             driver.findElement(By.id("userGroup.name")).sendKeys("Test Group");
             driver.findElement(By.name("save")).click();
