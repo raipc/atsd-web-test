@@ -1,7 +1,6 @@
 package com.axibase.webtest.forecasts;
 
 import com.axibase.webtest.CommonAssertions;
-import com.axibase.webtest.service.Configuration;
 import com.axibase.webtest.service.AtsdTest;
 import com.axibase.webtest.service.CSVDataUploaderService;
 import com.axibase.webtest.service.csv.CSVImportParserAsSeriesTest;
@@ -68,7 +67,6 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfForecasts() {
         try {
-
             WebDriverWait wait = new WebDriverWait(driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*/section[@id='summary-container']/table")));
 
@@ -78,7 +76,8 @@ public class ForecastPageTest extends AtsdTest {
             int forecastCountInSummary = driver.
                     findElements(By.cssSelector("#summary-container > table > thead > tr > th")).size() - 1;
 
-            assertEquals("Wrong count of forecasts", forecastCountInChart, forecastCountInSummary);
+            assertEquals("Different count of forecasts in the chart and in the summary",
+                    forecastCountInChart, forecastCountInSummary);
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -108,9 +107,9 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testClickableUnits() {
         try {
-            testUnitsChange("Wrong period unit", "week", "//*[@id='group-editor']/section[1]//button");
-            testUnitsChange("Wrong horizon unit", "week", "//*[@id='settings']//button");
-            testUnitsChange("Wrong score interval unit", "year", "//*[@id='group-editor']/section[4]//button");
+            testUnitsChange("Wrong period unit", "week", "period");
+            testUnitsChange("Wrong horizon unit", "week", "horizon");
+            testUnitsChange("Wrong score interval unit", "year", "forecast-score-interval");
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -283,7 +282,7 @@ public class ForecastPageTest extends AtsdTest {
             clickSubmitButton();
 
             String[] names = driver.findElement(By.id("group-toggle-list")).getText().split("\n");
-            List<WebElement> forecasts = driver.findElements(By.xpath("//*[@id='summary-container']/table/thead/tr/th"));
+            List<WebElement> forecasts = driver.findElements(By.xpath("//*[@id='summary-container']//thead//th"));
             forecasts.remove(0);
             for (int i = 0; i < forecasts.size(); i++) {
                 assertTrue("Wrong name of forecast", forecasts.get(i).getText().contains(names[i]));
@@ -481,11 +480,13 @@ public class ForecastPageTest extends AtsdTest {
         assertTrue("Wrong forecast name in components window", componentsWindow.getText().contains(name));
     }
 
-    private void testUnitsChange(String errorMessage, String newUnit, String path) {
-        driver.findElement(By.xpath(path)).click();
-        driver.findElement(By.xpath(path.replace("button", "") +
-                "ul/li/a[@data-value='" + newUnit + "']")).click();
-        assertEquals(errorMessage, newUnit, driver.findElement(By.xpath(path)).getText());
+    private void testUnitsChange(String errorMessage, String newUnit, String name) {
+        driver.findElement(By.id(name + "-count")).findElement(By.xpath("..//button")).click();
+        driver.findElement(By.id(name + "-count")).
+                findElement(By.xpath("..//ul/li/a[@data-value='" + newUnit + "']")).click();
+
+        assertEquals(errorMessage, newUnit,
+                driver.findElement(By.id(name + "-count")).findElement(By.xpath("..//button")).getText());
     }
 
     private void assertVisibility(String errorMessage, String elementId) {
@@ -551,7 +552,7 @@ public class ForecastPageTest extends AtsdTest {
     }
 
     private String createNewURL(Map<String, String> params) throws URISyntaxException {
-        String URIprefix = "http://localhost:8088/series/forecast";
+        String URIprefix = AtsdTest.url + "/series/forecast";
         List<NameValuePair> paramsForEncoding = new ArrayList<>();
         for (Map.Entry<String, String> entry : params.entrySet()) {
             paramsForEncoding.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
