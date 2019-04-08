@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 public class ForecastPageTest extends AtsdTest {
     private static final String DATA_CSV = CSVImportParserAsSeriesTest.class.getResource("csv-parser-test.csv").getFile();
-    private CSVDataUploaderService csvDataUploaderService = null;
+    private static CSVDataUploaderService csvDataUploaderService;
 
     @Before
     public void setUp() {
@@ -43,16 +43,30 @@ public class ForecastPageTest extends AtsdTest {
             params.put("entity", "nurswgvml007");
             params.put("metric", "forecastpagetest");
             params.put("startDate", "2019-03-17T08:11:22");
+            params.put("endDate", "2019-03-18T08:11:22");
             params.put("horizonInterval", "1-day");
             params.put("period", "25-minute");
+            params.put("scoreInterval", "1-MINUTE");
+            params.put("componentThreshold", "10");
+            params.put("windowLength", "45");
+            params.put("componentCount", "100");
+            params.put("aggregation", "PERCENTILE_75");
+            params.put("interpolation", "PREVIOUS");
+
 
             String newURL = createNewURL(params);
-
             driver.navigate().to(newURL);
 
-            assertStartDate(params.get("startDate"));
+            assertStartDate("URLParams:Wrong Start Date", params.get("startDate"), "start");
+            assertStartDate("URLParams:Wrong End Date", params.get("endDate"), "end");
             assertIntervalEquals("URLParams:Wrong period", params.get("period"), "period");
             assertIntervalEquals("URLParams:Wrong horizon interval", params.get("horizonInterval"), "horizon");
+            assertIntervalEquals("URLParams:Wrong score interval", params.get("scoreInterval"), "forecast-score-interval");
+            checkValueById("URLParams:Wrong threshold", params.get("componentThreshold"), "decompose-threshold");
+            checkValueById("URLParams:Wrong window length", params.get("windowLength"), "decompose-length");
+            checkValueById("URLParams:Wrong component count", params.get("componentCount"), "decompose-limit");
+            checkValueById("URLParams:Wrong aggregation", params.get("aggregation"), "aggregation");
+            checkValueById("URLParams:Wrong interpolation", params.get("interpolation"), "interpolation");
         } catch (AssertionError | URISyntaxException err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -447,7 +461,7 @@ public class ForecastPageTest extends AtsdTest {
     private void clickSubmitButton() {
         driver.findElement(By.id("group-save-btn")).click();
 
-        WebDriverWait wait = new WebDriverWait(driver, 15);
+        WebDriverWait wait = new WebDriverWait(driver, 20);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*/section[@id='summary-container']/table")));
     }
 
@@ -513,10 +527,10 @@ public class ForecastPageTest extends AtsdTest {
 
     }
 
-    private void assertStartDate(String startDate) {
-        String newDate = driver.findElement(By.id("startdate")).getAttribute("value") +
-                driver.findElement(By.id("starttime")).getAttribute("value");
-        assertEquals("Wrong start date", startDate.replace("T", ""), newDate);
+    private void assertStartDate(String errorMessage, String sendedDate, String typeOfDate) {
+        String newDate = driver.findElement(By.id(typeOfDate + "date")).getAttribute("value") +
+                driver.findElement(By.id(typeOfDate + "time")).getAttribute("value");
+        assertEquals(errorMessage, sendedDate.replace("T", ""), newDate);
     }
 
     private void goToForecastPage() {

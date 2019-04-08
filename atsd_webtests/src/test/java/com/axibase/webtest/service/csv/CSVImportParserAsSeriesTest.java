@@ -23,7 +23,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     }
 
     @Test
-    public void testImportCSPParserPage() {
+    public void testImportCSVParserPage() {
         try {
             setReplaceExisting(false);
             sendParserToTable(PATH_TO_PARSER);
