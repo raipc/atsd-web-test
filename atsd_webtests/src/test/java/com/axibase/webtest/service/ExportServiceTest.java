@@ -29,7 +29,8 @@ public class ExportServiceTest extends AtsdTest {
             String[] src = AtsdTest.driver.getPageSource().split("\n");
             String head = src[0];
             String body = src[1];
-            Assert.assertTrue("Csv file is incorrect", head.trim().equals("Timestamp,Value,Metric,Entity,host") && body.contains("jvm_memory_used_percent"));
+            Assert.assertEquals("Csv file (head) is incorrect", "Timestamp,Value,Metric,Entity,host", head.trim());
+            Assert.assertTrue("Csv file (body) is incorrect", body.contains("jvm_memory_used_percent"));
         } finally {
             AtsdTest.driver.quit();
             AtsdTest.driver = null;
@@ -45,7 +46,7 @@ public class ExportServiceTest extends AtsdTest {
             AtsdTest.driver = null;
             try {
                 String fpath = "/tmp/output" + rnd.nextInt(100) + ".csv";
-                String command = "curl -u " + login + ":" +  password + " -o " + fpath + " " + AtsdTest.url + uri;
+                String command = "curl -u " + login + ":" + password + " -o " + fpath + " " + AtsdTest.url + uri;
                 Process curlproc = Runtime.getRuntime().exec(command);
                 curlproc.waitFor();
                 File file = new File(fpath);
@@ -66,7 +67,7 @@ public class ExportServiceTest extends AtsdTest {
             this.saveScreenshot(filepath);
             System.out.println(err.toString());
             Assert.fail();
-    }
+        }
 
     }
 }

@@ -1,7 +1,13 @@
 package com.axibase.webtest.forecasts;
 
+import com.axibase.webtest.CommonAssertions;
+import com.axibase.webtest.service.Configuration;
 import com.axibase.webtest.service.AtsdTest;
+import com.axibase.webtest.service.CSVDataUploaderService;
 import com.axibase.webtest.service.csv.CSVImportParserAsSeriesTest;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -9,58 +15,46 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 public class ForecastPageTest extends AtsdTest {
-    private static String parserXml = CSVImportParserAsSeriesTest.class.getResource("csv-parsers.xml").getFile();
-    private static String dataCSV = CSVImportParserAsSeriesTest.class.getResource("csv-parser-test.csv").getFile();
-    private static boolean isDataMissing = true;
+    private static final String DATA_CSV = CSVImportParserAsSeriesTest.class.getResource("csv-parser-test.csv").getFile();
+    private CSVDataUploaderService csvDataUploaderService = null;
 
     @Before
     public void setUp() {
         this.login();
-
-        if (isDataMissing) {
-            importParser();
-            importData();
-            isDataMissing = false;
+        if (csvDataUploaderService == null) {
+            csvDataUploaderService = new CSVDataUploaderService(AtsdTest.driver, AtsdTest.url);
+            csvDataUploaderService.uploadWithParser(DATA_CSV, "test-atsd-import-series-parser");
         }
         goToForecastPage();
     }
 
-    private void importData() {
-        driver.get(url + "/data/csv/parsers/parser/csv-parser-test");
-        driver.findElement(By.id("file")).sendKeys(dataCSV);
-        driver.findElement(By.id("upload-btn")).click();
-    }
-
-    private void importParser() {
-        driver.get(url + "/csv/configs/import");
-        driver.findElement(By.id("putTable")).findElement(By.xpath(".//input[@type='file']")).sendKeys(parserXml);
-        driver.findElement(By.xpath(".//input[@type='submit']")).click();
-    }
-
     @Test
-    public void testForecastURLParams() {
+    public void testForecastURLParams() throws URISyntaxException {
         try {
-            String horizonInterval = "1-day";
-            String period = "25-minute";
-            String startDate = "2019-03-17T08:11:22";
+            Map<String, String> params = new HashMap<>();
+            params.put("entity", "nurswgvml007");
+            params.put("metric", "forecastpagetest");
+            params.put("startDate", "2019-03-17T08:11:22");
+            params.put("horizonInterval", "1-day");
+            params.put("period", "25-minute");
 
-            String newURL = String.format(driver.getCurrentUrl().split("startDate")[0] +
-                            "startDate=%s&" +
-                            "horizonInterval=%s&" +
-                            "period=%s",
-                    startDate, horizonInterval, period);
+            String newURL = createNewURL(params);
+
             driver.navigate().to(newURL);
 
-            assertStartDate(startDate);
-            assertPeriods("Wrong period", "period-unit", period, "period-count");
-            assertPeriods("Wrong horizon interval", "horizon-unit", horizonInterval, "horizon-count");
-        } catch (AssertionError err) {
+            assertStartDate(params.get("startDate"));
+            assertIntervalEquals("URLParams:Wrong period", params.get("period"), "period");
+            assertIntervalEquals("URLParams:Wrong horizon interval", params.get("horizonInterval"), "horizon");
+        } catch (AssertionError | URISyntaxException err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
                     Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
@@ -78,13 +72,13 @@ public class ForecastPageTest extends AtsdTest {
             WebDriverWait wait = new WebDriverWait(driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*/section[@id='summary-container']/table")));
 
-            int countInPic = driver.
+            int forecastCountInChart = driver.
                     findElements(By.cssSelector("#widget-container > svg > g > g > rect")).size();
 
-            int countInSummary = driver.
+            int forecastCountInSummary = driver.
                     findElements(By.cssSelector("#summary-container > table > thead > tr > th")).size() - 1;
 
-            assertEquals("Wrong count of forecasts", countInPic, countInSummary);
+            assertEquals("Wrong count of forecasts", forecastCountInChart, forecastCountInSummary);
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -96,25 +90,11 @@ public class ForecastPageTest extends AtsdTest {
     }
 
     @Test
-    public void testAddAndRemoveBtns() {
+    public void testAddAndRemoveButtons() {
         try {
-            WebElement addButton = driver.findElement(By.id("add-group-btn"));
-            WebElement removeButton = driver.findElement(By.id("remove-group-btn"));
-
-            assertVisibility("Remove button is broken", false, "remove-group-btn");
-
-            assertCountOfForecasts(1);
-            addButton.click();
-            assertVisibility("Remove button is broken", true, "remove-group-btn");
-            assertVisibility("Add button is broken", true, "add-group-btn");
-            addButton.click();
-            removeButton.click();
-            assertCountOfForecasts(2);
-            addButton.click();
-            addButton.click();
-            addButton.click();
-            assertCountOfForecasts(5);
-            assertVisibility("Add button is broken", false, "add-group-btn");
+            checkAddAndRemoveButtonsInnerCase();
+            checkFromMinToMaxTabsCase();
+            checkFromMaxToMinTabsCase();
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -123,7 +103,6 @@ public class ForecastPageTest extends AtsdTest {
             this.saveScreenshot(filepath);
             throw err;
         }
-
     }
 
     @Test
@@ -177,16 +156,13 @@ public class ForecastPageTest extends AtsdTest {
             setSelectionOption("reconstruct-avg", "Median");
             setSelectionOption("grouping-auto-clustering-method", "Novosibirsk");
 
-            driver.findElement(By.id("add-group-btn")).click();
+            getAddButton().click();
 
-            checkValueById("Wrong threshold", "10", "decompose-threshold");
-            checkValueById("Wrong limit", "12", "decompose-limit");
-            checkValueById("Wrong length", "44", "decompose-length");
-            checkValueById("Wrong avgFunction name", "median".toUpperCase(), "reconstruct-avg");
-            checkValueById("Wrong clustering param", "Novosibirsk".toUpperCase(), "grouping-auto-clustering-method");
-//            assertEquals("Wrong clustering param", "Novosibirsk".toUpperCase(),
-//                    driver.findElement(By.id("grouping-auto-clustering-method")).getAttribute("value"));
-
+            checkValueById("Wrong threshold after cloning", "10", "decompose-threshold");
+            checkValueById("Wrong limit after cloning", "12", "decompose-limit");
+            checkValueById("Wrong length after cloning", "44", "decompose-length");
+            checkValueById("Wrong avgFunction name after cloning", "median".toUpperCase(), "reconstruct-avg");
+            checkValueById("Wrong clustering param after cloning", "Novosibirsk".toUpperCase(), "grouping-auto-clustering-method");
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -205,31 +181,25 @@ public class ForecastPageTest extends AtsdTest {
             setSelectionOption("reconstruct-avg", "Median");
             setSelectionOption("grouping-auto-clustering-method", "Novosibirsk");
 
-            driver.findElement(By.id("add-group-btn")).click();
+            getAddButton().click();
 
             driver.findElement(By.id("grouping-type-none")).click();
             setDecomposeParameters("20", "32", "34");
             setSelectionOption("reconstruct-avg", "Average");
 
-
             driver.findElements(By.xpath("//*[@id='group-toggle-list']/li")).get(0).click();
-            checkValueById("Wrong threshold", "10", "decompose-threshold");
-            checkValueById("Wrong limit", "12", "decompose-limit");
-            checkValueById("Wrong length", "44", "decompose-length");
-            checkValueById("Wrong avgFunction name", "median".toUpperCase(), "reconstruct-avg");
-            checkValueById("Wrong clustering param", "Novosibirsk".toUpperCase(), "grouping-auto-clustering-method");
-//            assertEquals("Wrong clustering param", "Novosibirsk".toUpperCase(),
-//                    driver.findElement(By.id("grouping-auto-clustering-method")).getAttribute("value"));
-
+            checkValueById("Wrong threshold in first tab", "10", "decompose-threshold");
+            checkValueById("Wrong limit in first tab", "12", "decompose-limit");
+            checkValueById("Wrong length in first tab", "44", "decompose-length");
+            checkValueById("Wrong avgFunction name in first tab", "median".toUpperCase(), "reconstruct-avg");
+            checkValueById("Wrong clustering param in first tab", "Novosibirsk".toUpperCase(), "grouping-auto-clustering-method");
 
             driver.findElements(By.xpath("//*[@id='group-toggle-list']/li")).get(1).click();
-            checkValueById("Wrong threshold", "20", "decompose-threshold");
-            checkValueById("Wrong limit", "32", "decompose-limit");
-            checkValueById("Wrong length", "34", "decompose-length");
-            checkValueById("Wrong avgFunction name", "avg".toUpperCase(), "reconstruct-avg");
-            assertTrue("Wrong clustering param", driver.findElement(By.id("grouping-type-none")).isSelected());
-
-
+            checkValueById("Wrong threshold in second tab", "20", "decompose-threshold");
+            checkValueById("Wrong limit in second tab", "32", "decompose-limit");
+            checkValueById("Wrong length in second tab", "34", "decompose-length");
+            checkValueById("Wrong avgFunction name in second tab", "avg".toUpperCase(), "reconstruct-avg");
+            assertTrue("Wrong clustering param in second tab", driver.findElement(By.id("grouping-type-none")).isSelected());
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -248,10 +218,9 @@ public class ForecastPageTest extends AtsdTest {
             setNumberParamById("decompose-limit", "19");
             clickSubmitButton();
 
-            int countInPic = driver.
-                    findElements(By.cssSelector("#widget-container > svg > g > g > rect")).size();
+            int countInPic = driver.findElements(By.cssSelector("#widget-container > svg > g > g > rect")).size();
 
-            assertEquals("Wrong count of groups on a chart", countOfGroups, Integer.toString(countInPic));
+            assertEquals("Wrong count of groups on the chart", countOfGroups, Integer.toString(countInPic));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -265,13 +234,13 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfHistoryChartsInSummary() {
         try {
-            driver.findElement(By.id("add-group-btn")).click();
+            getAddButton().click();
             clickSubmitButton();
 
-            int countInSummary = driver.
+            int forecastCountInSummary = driver.
                     findElements(By.cssSelector("#summary-container > table > thead > tr > th")).size() - 1;
 
-            assertEquals("Wrong count of history charts in summary", 2, countInSummary);
+            assertEquals("Wrong count of history charts in summary", 2, forecastCountInSummary);
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -285,15 +254,15 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfHistoryChartsInPic() {
         try {
-            driver.findElement(By.id("add-group-btn")).click();
+            getAddButton().click();
             setNumberParamById("period-count", "20");
             setSelectionOption("aggregation", "sum");
             setSelectionOption("interpolation", "prev");
             clickSubmitButton();
 
-            int countInPic = driver.
+            int forecastCountInChart = driver.
                     findElements(By.cssSelector("#widget-container > svg > g > g > circle")).size();
-            assertEquals("Wrong count of history charts in pic", 2, countInPic);
+            assertEquals("Wrong count of history charts in chart", 2, forecastCountInChart);
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -307,10 +276,10 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testNamesInSummary() {
         try {
-            driver.findElement(By.id("add-group-btn")).click();
-            driver.findElement(By.id("add-group-btn")).click();
+            getAddButton().click();
+            getAddButton().click();
             driver.findElements(By.xpath("//*[@id='group-toggle-list']/li")).get(1).click();
-            driver.findElement(By.id("remove-group-btn")).click();
+            getRemoveButton().click();
             clickSubmitButton();
 
             String[] names = driver.findElement(By.id("group-toggle-list")).getText().split("\n");
@@ -338,15 +307,16 @@ public class ForecastPageTest extends AtsdTest {
             assertTrue("The score interval should be displayed before the Component Threshold is filled",
                     intervalScore.isDisplayed());
 
-            threshold.sendKeys("10");
+            threshold.sendKeys("5");
             assertFalse("The score interval shouldn't be displayed after the Component Threshold is filled",
                     intervalScore.isDisplayed());
-            threshold.sendKeys(Keys.CONTROL, "a");
+            threshold.click();
             threshold.sendKeys(Keys.DELETE);
+            threshold.sendKeys(Keys.BACK_SPACE);
 
             assertTrue("The Component Threshold should be enabled before the Score Interval if filled",
                     threshold.isEnabled());
-            intervalScore.sendKeys("10");
+            intervalScore.sendKeys("5");
             driver.findElement(By.xpath("//body")).click();
             assertFalse("The Component Threshold shouldn't be enabled after the Score Interval if filled",
                     threshold.isEnabled());
@@ -367,13 +337,14 @@ public class ForecastPageTest extends AtsdTest {
             driver.findElement(By.id("grouping-type-auto")).click();
             WebElement groupCount = driver.findElement(By.id("grouping-auto-count"));
 
-            assertValid("The Group Count is validated but it have not to",
-                    true, "#grouping-auto-count");
+
+            CommonAssertions.assertValid("The Group Count is validated but it have not to",
+                    driver.findElements(By.cssSelector("#grouping-auto-count:valid")));
             componentCount.sendKeys("3");
             groupCount.sendKeys("10");
             driver.findElement(By.id("group-save-btn")).click();
-            assertValid("The Group Count is not validated but it have to",
-                    false, "#grouping-auto-count");
+            CommonAssertions.assertInvalid("The Group Count is not validated but it have to",
+                    driver.findElements(By.cssSelector("#grouping-auto-count:valid")));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -387,11 +358,11 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void componentThresholdBoundValidationTest() {
         try {
-            assertValid("The Component Threshold is validated but it have not to",
-                    true, "#decompose-threshold");
+            CommonAssertions.assertValid("The Component Threshold is validated but it have not to",
+                    driver.findElements(By.cssSelector("#decompose-threshold:valid")));
             setNumberParamById("decompose-threshold", "100");
-            assertValid("The Component Threshold is not validated but it have to",
-                    false, "#decompose-threshold");
+            CommonAssertions.assertInvalid("The Component Threshold is not validated but it have to",
+                    driver.findElements(By.cssSelector("#decompose-threshold:valid")));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -402,8 +373,49 @@ public class ForecastPageTest extends AtsdTest {
         }
     }
 
-    private void assertValid(String errorMessage, boolean isValid, String cssPathToElement) {
-        assertEquals(errorMessage, isValid, !driver.findElements(By.cssSelector(cssPathToElement + ":valid")).isEmpty());
+    private void checkFromMaxToMinTabsCase() {
+        getRemoveButton();
+
+        getRemoveButton().click();
+        getRemoveButton().click();
+        getRemoveButton().click();
+        getRemoveButton().click();
+        assertInvisibility("Remove button is broken:", "remove-group-btn");
+    }
+
+    private void checkFromMinToMaxTabsCase() {
+        getAddButton();
+        assertInvisibility("Remove button is broken:", "remove-group-btn");
+        assertCountOfForecasts(1);
+        getAddButton().click();
+        getAddButton().click();
+        getAddButton().click();
+        getAddButton().click();
+        assertCountOfForecasts(5);
+        assertInvisibility("Add button is broken:", "add-group-btn");
+    }
+
+    private void checkAddAndRemoveButtonsInnerCase() {
+        getAddButton();
+        getRemoveButton();
+
+        getAddButton().click();
+
+        assertVisibility("Remove button is broken:", "remove-group-btn");
+        assertVisibility("Add button is broken:", "add-group-btn");
+        getAddButton().click();
+        getRemoveButton().click();
+        assertCountOfForecasts(2);
+        getRemoveButton().click();
+        assertCountOfForecasts(1);
+    }
+
+    private WebElement getRemoveButton() {
+        return driver.findElement(By.id("remove-group-btn"));
+    }
+
+    private WebElement getAddButton() {
+        return driver.findElement(By.id("add-group-btn"));
     }
 
     private void checkValueById(String errorMessage, String correctValue, String id) {
@@ -414,7 +426,6 @@ public class ForecastPageTest extends AtsdTest {
     private void setSelectionOption(String selectId, String newValue) {
         WebElement elem = driver.findElement(By.id(selectId));
         elem.sendKeys(newValue);
-//        driver.findElement(By.id("group-modal")).click();
     }
 
     private void setDecomposeParameters(String threshold, String componentCount, String windowLen) {
@@ -477,9 +488,15 @@ public class ForecastPageTest extends AtsdTest {
         assertEquals(errorMessage, newUnit, driver.findElement(By.xpath(path)).getText());
     }
 
-    private void assertVisibility(String errorMessage, boolean isVisible, String elementId) {
-        if (driver.findElements(By.cssSelector(elementId)).size() != 0) {
-            assertEquals(errorMessage, isVisible, driver.findElement(By.id(elementId)).isDisplayed());
+    private void assertVisibility(String errorMessage, String elementId) {
+        if (!driver.findElements(By.id(elementId)).isEmpty()) {
+            assertTrue(errorMessage + "should be visible but it is not", driver.findElement(By.id(elementId)).isDisplayed());
+        }
+    }
+
+    private void assertInvisibility(String errorMessage, String elementId) {
+        if (!driver.findElements(By.id(elementId)).isEmpty()) {
+            assertFalse(errorMessage + "should be not visible but it is", driver.findElement(By.id(elementId)).isDisplayed());
         }
     }
 
@@ -488,9 +505,9 @@ public class ForecastPageTest extends AtsdTest {
                 driver.findElement(By.id("group-toggle-list")).findElements(By.xpath("./li")).size());
     }
 
-    private void assertPeriods(String errorMessage, String unitType, String expectedValue, String countTypeId) {
-        String newPeriod = driver.findElement(By.id(countTypeId)).getAttribute("value") + "-" +
-                driver.findElement(By.id(unitType)).getAttribute("value");
+    private void assertIntervalEquals(String errorMessage, String expectedValue, String typeOfInterval) {
+        String newPeriod = driver.findElement(By.id(typeOfInterval + "-count")).getAttribute("value") + "-" +
+                driver.findElement(By.id(typeOfInterval + "-unit")).getAttribute("value");
         assertEquals(errorMessage, expectedValue.toLowerCase(), newPeriod.toLowerCase());
 
     }
@@ -531,5 +548,14 @@ public class ForecastPageTest extends AtsdTest {
         List<String> tabs = new ArrayList<>(driver.getWindowHandles());
         driver.close();
         driver.switchTo().window(tabs.get(1));
+    }
+
+    private String createNewURL(Map<String, String> params) throws URISyntaxException {
+        String URIprefix = "http://localhost:8088/series/forecast";
+        List<NameValuePair> paramsForEncoding = new ArrayList<>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            paramsForEncoding.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+        }
+        return new URIBuilder(URIprefix).addParameters(paramsForEncoding).build().toString();
     }
 }

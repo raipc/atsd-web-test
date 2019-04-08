@@ -2,7 +2,6 @@ package com.axibase.webtest.service.csv;
 
 import com.axibase.webtest.service.AtsdTest;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -10,13 +9,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
+import static org.junit.Assert.*;
 
 public class CSVImportParserAsSeriesTest extends AtsdTest {
+    private static final String PARSER_NAME = "test-atsd-import-series-parser";
+    private static final String PATH_TO_PARSER = CSVImportParserAsSeriesTest.class.getResource("test-atsd-import-series-parser.xml").getFile();
 
-    private static String fileXml = CSVImportParserAsSeriesTest.class.getResource("csv-parsers.xml").getFile();
-
-    private String[][] expectedResult = {{"csv2-parser-test", "Yes", "Series"}};
 
     @Before
     public void setUp() {
@@ -28,11 +26,11 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     public void testImportCSPParserPage() {
         try {
             setReplaceExisting(false);
-            sendParserToTable(fileXml);
+            sendParserToTable(PATH_TO_PARSER);
 
             goToCSVParsersPage();
-            Assert.assertTrue("Wrong table content",
-                    checkParserAdd(driver.findElement(By.id("configurationList"))));
+            assertTrue("Parser is not added",
+                    driver.findElement(By.xpath("//*[@id='configurationList']/tbody")).getText().contains(PARSER_NAME));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -44,16 +42,16 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     }
 
     @Test
-    public void testImportCSPParserWithReplace() {
+    public void testImportCSVParserWithReplace() {
         try {
             setReplaceExisting(false);
-            sendParserToTable(fileXml);
+            sendParserToTable(PATH_TO_PARSER);
             setReplaceExisting(true);
-            sendParserToTable(fileXml);
+            sendParserToTable(PATH_TO_PARSER);
 
             goToCSVParsersPage();
-            Assert.assertTrue("Wrong table content",
-                    checkParserAdd(driver.findElement(By.id("configurationList"))));
+            assertTrue("Parser is not added",
+                    driver.findElement(By.xpath("//*[@id='configurationList']/tbody")).getText().contains(PARSER_NAME));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -67,7 +65,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     @After
     public void cleanUp() {
         deleteParsers();
-        Assert.assertEquals("Parsers are not removed", 0,
+        assertEquals("Parsers are not removed", 0,
                 driver.findElement(By.id("configurationList")).findElements(By.xpath("./tbody/tr")).size());
     }
 
@@ -92,8 +90,8 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
         inputFile.sendKeys(file);
         submitButton.click();
 
-        Assert.assertTrue("No success message",
-                driver.findElements(By.xpath("//*/span[@class='successMessage']")).size() != 0);
+        assertFalse("No success message",
+                driver.findElements(By.xpath("//*/span[@class='successMessage']")).isEmpty());
     }
 
     private void setReplaceExisting(boolean on) {
@@ -103,7 +101,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     private void goToCSVParsersPage() {
         driver.findElement(By.xpath("//*/a/span[contains(text(),'Data')]")).click();
         driver.findElement(By.xpath("//*/a[contains(text(),'CSV Parsers')]")).click();
-        Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/csv/configs");
+        assertEquals("Wrong page", driver.getCurrentUrl(), url + "/csv/configs");
     }
 
     private void goToCSVParsersImportPage() {
@@ -111,7 +109,7 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
         driver.findElement(By.xpath("//*/button/span[@class='caret']")).click();
         driver.findElement(By.xpath("//*/a[text()='Import']")).click();
-        Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/csv/configs/import");
+        assertEquals("Wrong page", driver.getCurrentUrl(), url + "/csv/configs/import");
     }
 
     private void setCheckbox(WebElement webElement, boolean on) {
@@ -119,23 +117,4 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
             webElement.click();
         }
     }
-
-    private boolean checkParserAdd(WebElement table) {
-        List<WebElement> findElements = table.findElements(By.xpath("./tbody/tr"));
-        if (findElements.size() != expectedResult.length) {
-            return false;
-        }
-
-        for (int i = 0; i < findElements.size(); i++) {
-            List<WebElement> tdList = findElements.get(i).findElements(By.xpath("./td"));
-            if (!tdList.get(1).getText().equals(expectedResult[i][0]) &&
-                    !tdList.get(2).getText().equals(expectedResult[i][1]) &&
-                    !tdList.get(3).getText().equals(expectedResult[i][2])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 }

@@ -1,6 +1,6 @@
 <list>
   <com.axibase.tsd.model.csv.WizardBasedCsvConfiguration>
-    <name>csv-parser-test</name>
+    <name>test-atsd-import-series-parser</name>
     <enabled>true</enabled>
     <delimiter>,</delimiter>
     <recordDelimiter>&#xd;</recordDelimiter>
