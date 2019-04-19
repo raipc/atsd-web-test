@@ -14,9 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Anna Striganova on 25.05.18
- */
 public class ActionOnTestState extends TestWatcher {
 
     @Override
@@ -55,7 +52,7 @@ public class ActionOnTestState extends TestWatcher {
         }
     }
 
-    public void takeScreenshot(String classAndMethod) {
+    private void takeScreenshot(String classAndMethod) {
         String filepath = AtsdTest.screenshotDir + "/"
                 + classAndMethod + "_"
                 + System.currentTimeMillis()
