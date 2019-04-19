@@ -10,10 +10,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Anna Striganova on 11.04.18.
- */
-
 public class CreateUserGroupTest extends AtsdTest {
 
     private String testUser = "axiuser";
