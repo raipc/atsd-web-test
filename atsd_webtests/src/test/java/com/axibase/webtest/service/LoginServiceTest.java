@@ -1,35 +1,38 @@
 package com.axibase.webtest.service;
 
-
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sild on 02.02.15.
  */
 public class LoginServiceTest extends AtsdTest {
+
     private final static String wrongLogin = "123";
     private final static String wrongPassword = "123";
+
     @Test
     public void testLogin() {
-        Assert.assertTrue(generateAssertMessage("Title should be 'Login"), AtsdTest.driver.getTitle().equals("Login"));
-        LoginService ls = new LoginService(AtsdTest.driver);
-        Assert.assertTrue("Can't login on page", ls.login(AtsdTest.login, AtsdTest.password));
+        assertTrue(generateAssertMessage("Title should be 'Login"), driver.getTitle().equals("Login"));
+        LoginService ls = new LoginService(driver);
+        assertTrue("Can't login on page", ls.login(login, password));
     }
 
     @Test
     public void wrongLogin() {
-        Assert.assertTrue(generateAssertMessage("Title should be 'Login"), AtsdTest.driver.getTitle().equals("Login"));
-        LoginService ls = new LoginService(AtsdTest.driver);
-        Assert.assertFalse("Should return to login page with wrong login", ls.login(wrongLogin, AtsdTest.password));
-        Assert.assertFalse("Should return to login page with wrong password", ls.login(AtsdTest.login, wrongPassword));
+        assertTrue(generateAssertMessage("Title should be 'Login"), driver.getTitle().equals("Login"));
+        LoginService ls = new LoginService(driver);
+        assertFalse("Should return to login page with wrong login", ls.login(wrongLogin, password));
+        assertFalse("Should return to login page with wrong password", ls.login(login, wrongPassword));
     }
 
     @Test
     public void testLogout() {
-        Assert.assertTrue(generateAssertMessage("Title should be 'Login"), AtsdTest.driver.getTitle().equals("Login"));
-        LoginService ls = new LoginService(AtsdTest.driver);
-        Assert.assertTrue("Can't login on page", ls.login(AtsdTest.login, AtsdTest.password));
-        Assert.assertTrue("Can't logout from page", ls.logout());
+        assertTrue(generateAssertMessage("Title should be 'Login"), driver.getTitle().equals("Login"));
+        LoginService ls = new LoginService(driver);
+        assertTrue("Can't login on page", ls.login(login, password));
+        assertTrue("Can't logout from page", ls.logout());
     }
 }
