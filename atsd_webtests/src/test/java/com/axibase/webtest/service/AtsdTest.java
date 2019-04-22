@@ -69,16 +69,22 @@ public class AtsdTest {
         return message;
     }
 
-    protected void login() throws Exception {
+    protected void login() {
         if (driver.getTitle().equals(LoginService.title)) {
             LoginService ls = new LoginService(driver);
             if (ls.login(login, password)) {
                 driver.navigate().to(url);
             } else {
-                throw new Exception("Can't login");
+                throw new BadLoginException("Can not login");
             }
         } else {
-            throw new Exception("Expected title is '" + LoginService.title + "' but there is '" + driver.getTitle());
+            throw new BadLoginException("Expected login page title is '" + LoginService.title + "' but there is '" + driver.getTitle());
+        }
+    }
+
+    public static class BadLoginException extends RuntimeException {
+        public BadLoginException(String message) {
+            super(message);
         }
     }
 }

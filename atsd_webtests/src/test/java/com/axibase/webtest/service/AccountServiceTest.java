@@ -40,7 +40,7 @@ public class AccountServiceTest extends AtsdTest {
     }
 
     @Test
-    public void deleteUser() throws Exception {
+    public void deleteUser() {
 
         if (!driver.getTitle().equals("Login")) {
             System.out.println("Trying to create admin...");
