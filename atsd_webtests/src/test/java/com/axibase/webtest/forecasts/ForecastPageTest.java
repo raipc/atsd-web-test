@@ -77,7 +77,6 @@ public class ForecastPageTest extends AtsdTest {
 
             assertEquals("There has to be only one silver component", 1,
                     forecastViewerPage.getCountOfPassiveComponentsInComponentContainer());
-            System.out.println();
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -213,7 +212,7 @@ public class ForecastPageTest extends AtsdTest {
             loadDataAndParserByNames("test-atsd-_g-forecast-viewer-parser", "test-atsd-_g-forecast-viewer-data");
 
             driver.get(URL_FOR_GROUPING_WITH_TAGS);
-            forecastViewerPage.gotoForecastSettings();
+            forecastViewerPage.scheduleForecast();
             switchToWindowTab(1);
             ForecastSettingsPage forecastSettings = new ForecastSettingsPage(driver);
             assertEquals("Wrong type of grouping in forecast settings", "Metric - Entity - Defined Tags",
@@ -240,7 +239,7 @@ public class ForecastPageTest extends AtsdTest {
         try {
             loadDataAndParserByNames("test-atsd-_g-forecast-viewer-parser", "test-atsd-_g-forecast-viewer-data");
             driver.get(URL_FOR_GROUPING_WITHOUT_TAGS);
-            forecastViewerPage.gotoForecastSettings();
+            forecastViewerPage.scheduleForecast();
             switchToWindowTab(1);
             ForecastSettingsPage forecastSettings = new ForecastSettingsPage(driver);
             assertEquals("Wrong type of grouping in forecast settings", "Metric - Entity",
@@ -265,7 +264,7 @@ public class ForecastPageTest extends AtsdTest {
         try {
             loadDataAndParserByNames("test-atsd-_g-forecast-viewer-parser", "test-atsd-_g-forecast-viewer-data");
             driver.get(URL_FOR_GROUPING_WITH_TAGS);
-            forecastViewerPage.gotoPortalPage();
+            forecastViewerPage.savePortal();
             switchToWindowTab(1);
             PortalPage portalPage = new PortalPage(driver);
             assertTrue("There is no tags section", portalPage.getContentWrapperText().contains("[tags]"));
@@ -291,7 +290,7 @@ public class ForecastPageTest extends AtsdTest {
         try {
             loadDataAndParserByNames("test-atsd-_g-forecast-viewer-parser", "test-atsd-_g-forecast-viewer-data");
             driver.get(URL_FOR_GROUPING_WITHOUT_TAGS);
-            forecastViewerPage.gotoPortalPage();
+            forecastViewerPage.savePortal();
             switchToWindowTab(1);
             PortalPage portalPage = new PortalPage(driver);
             assertFalse("There is tag section without tags", portalPage.getContentWrapperText().contains("[tags]"));
@@ -331,18 +330,18 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testCorrectnessOfLinkClicks() {
         try {
-            forecastViewerPage.gotoBreadcrumpLink("nurswgvml007");
+            forecastViewerPage.getBreadcrumbElement(2).click();
             assertEquals("Wrong page while click on entity link in breadcrumb",
                     "Entity: nurswgvml007", driver.getTitle());
             driver.navigate().back();
-            forecastViewerPage.gotoBreadcrumpLink("forecastpagetest");
+            forecastViewerPage.getBreadcrumbElement(1).click();
             assertEquals("Wrong page while click on metric link in breadcrumb",
                     "Metric: forecastpagetest", driver.getTitle());
             driver.navigate().back();
 
             assertEquals("Wrong tag parameters in breadcrumb",
                     "tag_name1=\"forecastPageTest\", tag_name2=\"forecastPageTest\"",
-                    forecastViewerPage.getBreadcrumpTags());
+                    forecastViewerPage.getBreadcrumbElement(3).getText());
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -356,9 +355,9 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfTooltipsInRegularizeBlock() {
         try {
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getAggregation()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getInterpolation()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getPeriodCount()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getAggregation()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getInterpolation()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getPeriodCount()));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -372,9 +371,9 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfTooltipsInDecomposeBlock() {
         try {
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getThreshold()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getComponentCount()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getWindowLength()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getThreshold()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getComponentCount()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getWindowLength()));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -392,13 +391,13 @@ public class ForecastPageTest extends AtsdTest {
             forecastViewerPage.setGroupCount("1");
             forecastViewerPage.switchStack();
 
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getGroupCount()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getClustering()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getStackElement()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getGroupAutoElement()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getGroupCount()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getClustering()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getStackElement()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getGroupUnion1()));
 
             forecastViewerPage.setGroupManual();
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getGroupManualElement()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getGroupComponentIndex1()));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -412,8 +411,8 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfTooltipsInForecastBlock() {
         try {
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getAveragingFunction()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getScoreIntervalCount()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getAveragingFunction()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getScoreIntervalCount()));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -427,9 +426,9 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfTooltipsInSettingsBlock() {
         try {
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getStartDate()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getEndDate()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getForecastHorizonCount()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getStartDate()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getEndDate()));
+            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getForecastHorizonCount()));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -443,10 +442,10 @@ public class ForecastPageTest extends AtsdTest {
     @Test
     public void testPresenceOfTooltipsInSettingsButtonsBlock() {
         try {
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getStatistics()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getPortal()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getDownloadingPortal()));
-            forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.selectElementTooltip(forecastViewerPage.getForecastSettings()));
+            forecastViewerPage.waitUntilTooltipIsShown(forecastViewerPage.getStatistics());
+            forecastViewerPage.waitUntilTooltipIsShown(forecastViewerPage.getPortal());
+            forecastViewerPage.waitUntilTooltipIsShown(forecastViewerPage.getDownloadingPortal());
+            forecastViewerPage.waitUntilTooltipIsShown(forecastViewerPage.getForecastSettings());
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -479,7 +478,7 @@ public class ForecastPageTest extends AtsdTest {
         try {
             storeCurrentWidgetContainerInJS();
             forecastViewerPage.setThreshold("100");
-            forecastViewerPage.submitForm();
+            forecastViewerPage.clickSubmitButton();
             isStoredWidgetContainerEqualsNew();
             assertTrue("Submit button was submitted but there is an error in the form",
                     isStoredWidgetContainerEqualsNew());
@@ -493,13 +492,12 @@ public class ForecastPageTest extends AtsdTest {
         }
     }
 
-
     @Test
     public void testSubmitButtonWithWindowLengthErrorInForm() {
         try {
             storeCurrentWidgetContainerInJS();
             forecastViewerPage.setWindowLength("100");
-            forecastViewerPage.submitForm();
+            forecastViewerPage.clickSubmitButton();
             assertTrue("Submit button was submitted but there is an error in the form",
                     isStoredWidgetContainerEqualsNew());
         } catch (AssertionError err) {
@@ -519,7 +517,7 @@ public class ForecastPageTest extends AtsdTest {
             forecastViewerPage.setGroupAuto();
             forecastViewerPage.setComponentCount("1");
             forecastViewerPage.setGroupCount("10");
-            forecastViewerPage.submitForm();
+            forecastViewerPage.clickSubmitButton();
             assertTrue("Submit button was submitted but there is an error in the form",
                     isStoredWidgetContainerEqualsNew());
         } catch (AssertionError err) {
@@ -540,7 +538,7 @@ public class ForecastPageTest extends AtsdTest {
             forecastViewerPage.getGroupComponentIndex1().clear();
             forecastViewerPage.getGroupComponentIndex2().clear();
             forecastViewerPage.getGroupComponentIndex3().clear();
-            forecastViewerPage.submitForm();
+            forecastViewerPage.clickSubmitButton();
             assertTrue("Submit button was submitted but there is an error in the form",
                     isStoredWidgetContainerEqualsNew());
         } catch (AssertionError err) {
@@ -591,7 +589,8 @@ public class ForecastPageTest extends AtsdTest {
             assertStartDate("URLParams: Wrong Start Date", params.get("startDate"));
             assertEndDate("URLParams: Wrong End Date", params.get("endDate"));
             assertIntervalEquals("URLParams: Wrong horizon interval", params.get("horizonInterval"),
-                    forecastViewerPage.getForecastHorizonInterval());
+                    CommonSelects.getFormattedInterval(forecastViewerPage.getForecastHorizonCount(),
+                            forecastViewerPage.getForecastHorizonUnit()));
         } catch (AssertionError err) {
             String filepath = AtsdTest.screenshotDir + "/" +
                     this.getClass().getSimpleName() + "_" +
@@ -600,7 +599,6 @@ public class ForecastPageTest extends AtsdTest {
             this.saveScreenshot(filepath);
             throw err;
         }
-
     }
 
     @Test
@@ -669,7 +667,6 @@ public class ForecastPageTest extends AtsdTest {
             throw err;
         }
     }
-
 
     @Test
     public void testInBetweenButtonsCase() {
@@ -1095,7 +1092,7 @@ public class ForecastPageTest extends AtsdTest {
                     forecastViewerPage.getGroupCount());
             forecastViewerPage.getComponentCount().sendKeys("3");
             forecastViewerPage.getGroupCount().sendKeys("10");
-            forecastViewerPage.submitForm();
+            forecastViewerPage.clickSubmitButton();
             CommonAssertions.assertInvalid("The Group Count is not validated but it have to", driver,
                     forecastViewerPage.getGroupCount());
         } catch (AssertionError err) {
@@ -1152,7 +1149,7 @@ public class ForecastPageTest extends AtsdTest {
     }
 
     private void assertCountOfGreenComponents(int forecastNumber) {
-        int countOfActiveComponents = forecastViewerPage.getCountOfActiveComponentsOfForecast(forecastNumber);
+        int countOfActiveComponents = forecastViewerPage.getCountOfActiveComponentsInSingularValueContainer(forecastNumber);
         int countOfGreenComponents = forecastViewerPage.getCountOfActiveComponentsInComponentContainer();
         assertEquals("Wrong count of green components", countOfActiveComponents, countOfGreenComponents);
     }
@@ -1161,7 +1158,6 @@ public class ForecastPageTest extends AtsdTest {
         String name = forecastViewerPage.getNameOfForecastInSummaryTable(forecast);
         assertTrue("Wrong forecast name in components window", componentContainer.getText().contains(name));
     }
-
 
     private void assertCountOfForecasts(int count) {
         assertEquals("Wrong count of forecasts", count, forecastViewerPage.getForecastsTabs().size());
@@ -1233,7 +1229,6 @@ public class ForecastPageTest extends AtsdTest {
                 element.getAttribute("class").contains("highlight"));
     }
 
-
     private String removeURLParameter(String url, String parameterName) {
         URIBuilder uriBuilder = null;
         try {
@@ -1259,7 +1254,9 @@ public class ForecastPageTest extends AtsdTest {
         assertValueAttributeOfElement("Wrong interpolation after " + testType, interpolationType,
                 forecastViewerPage.getInterpolation());
         assertIntervalEquals("Wrong period in the regularize section",
-                periodCount + "-" + periodUnit, forecastViewerPage.getPeriodInterval());
+                periodCount + "-" + periodUnit,
+                CommonSelects.getFormattedInterval(forecastViewerPage.getPeriodCount(),
+                        forecastViewerPage.getPeriodUnit()));
     }
 
     private void assertDecomposeOptionValues(String threshold, String componentCount, String windowLen, String testType) {
@@ -1271,12 +1268,13 @@ public class ForecastPageTest extends AtsdTest {
                 forecastViewerPage.getWindowLength());
     }
 
-
     private void assertForecastOptions(String average, String intervalCount, String intervalUnit, String testType) {
         assertValueAttributeOfElement("Wrong average name after " + testType, average,
                 forecastViewerPage.getAveragingFunction());
         assertIntervalEquals("Wrong score interval in the Forecast section",
-                intervalCount + "-" + intervalUnit, forecastViewerPage.getScoreInterval());
+                intervalCount + "-" + intervalUnit,
+                CommonSelects.getFormattedInterval(forecastViewerPage.getScoreIntervalCount(),
+                        forecastViewerPage.getScoreIntervalUnit()));
     }
 
     private void assertGroupAutoOptions(String countOfGroups, String clustering, String union1,
@@ -1356,4 +1354,5 @@ public class ForecastPageTest extends AtsdTest {
         params.put("tag_name1", "forecastPageTest");
         return params;
     }
+
 }

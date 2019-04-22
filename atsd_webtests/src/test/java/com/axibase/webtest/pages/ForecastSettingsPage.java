@@ -5,7 +5,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
 public class ForecastSettingsPage {
-
     private WebDriver driver;
     private By groupingType = By.id("groupingType");
     private By groupingTags = By.id("settings.requiredTagKeys");
@@ -19,6 +18,7 @@ public class ForecastSettingsPage {
     }
 
     public String getGroupingTags() {
-        return driver.findElement(By.id("settings.requiredTagKeys")).getAttribute("value");
+        return driver.findElement(groupingTags).getAttribute("value");
     }
+
 }

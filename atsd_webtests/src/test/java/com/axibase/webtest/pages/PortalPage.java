@@ -4,7 +4,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class PortalPage {
-
     private WebDriver driver;
     private By contentWrapper = By.id("content-wrapper");
 

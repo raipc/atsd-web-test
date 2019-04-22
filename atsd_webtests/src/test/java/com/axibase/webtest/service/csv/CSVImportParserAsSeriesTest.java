@@ -15,7 +15,6 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     private static final String PARSER_NAME = "test-atsd-import-series-parser";
     private static final String PATH_TO_PARSER = CSVImportParserAsSeriesTest.class.getResource("test-atsd-import-series-parser.xml").getFile();
 
-
     @Before
     public void setUp() {
         login();
@@ -114,4 +113,5 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
             webElement.click();
         }
     }
+
 }

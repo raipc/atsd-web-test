@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CommonAssertions {
+
     public static void assertValid(String errorMessage, WebDriver driver, WebElement element) {
         assertTrue(errorMessage, (Boolean) ((JavascriptExecutor) driver).
                 executeScript("return arguments[0].checkValidity()", element));

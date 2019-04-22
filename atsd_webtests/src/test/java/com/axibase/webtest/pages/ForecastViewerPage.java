@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ForecastViewerPage {
-
     private WebDriver driver;
 
     private By breadcrumb = By.className("breadcrumb");
@@ -69,48 +68,47 @@ public class ForecastViewerPage {
         this.driver = driver;
     }
 
-    public void gotoForecastSettings() {
+    public void scheduleForecast() {
         driver.findElement(forecastSettings).click();
     }
 
-    public void gotoPortalPage() {
+    public void savePortal() {
         driver.findElement(portal).click();
     }
 
-    public void gotoBreadcrumpLink(String linkName) {
-        driver.findElement(breadcrumb).findElement(By.linkText(linkName)).click();
+    public WebElement getBreadcrumbElement(int elementsNumber) {
+        return driver.findElement(breadcrumb).findElements(By.tagName("li")).get(elementsNumber);
     }
 
-    public String getBreadcrumpTags() {
-        return driver.findElement(breadcrumb).findElement(By.partialLinkText("tag")).getText();
-    }
 
     public void submitFormAndWait(int countOfSeconds) {
         driver.findElement(submitButton).click();
         waitUntilSummaryTableIsLoaded(countOfSeconds);
     }
 
-    public void submitForm() {
+    public void clickSubmitButton() {
         driver.findElement(submitButton).click();
     }
 
     public void waitUntilSummaryTableIsLoaded(int countOfSeconds) {
-        WebDriverWait wait = new WebDriverWait(driver, countOfSeconds);
+        Wait<WebDriver> wait = new WebDriverWait(driver, countOfSeconds).
+                withMessage("Chart's loading time (" + countOfSeconds + " seconds) is over");
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id='summary-container']/table")));
         } catch (TimeoutException e) {
             Assert.fail("Chart's loading time (" + countOfSeconds + " seconds) is over");
         }
-
     }
 
     public boolean isWidgetContainerLoading() {
         WebDriverWait wait = new WebDriverWait(driver, 1);
         boolean isLoading = false;
         try {
-            wait.until(ExpectedConditions.textToBePresentInElementLocated(
-                    By.cssSelector("#widget-container > .axi-tooltip.axi-tooltip-info > .axi-tooltip-inner"),
-                    "Loaded"));
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//*[@id='widget-container']/" +
+                            "*[@class='axi-tooltip axi-tooltip-info']/" +
+                            "*[@class='axi-tooltip-inner']/" +
+                            "*[text()='Loaded']")));
         } catch (TimeoutException e) {
             isLoading = true;
         }
@@ -126,7 +124,7 @@ public class ForecastViewerPage {
     }
 
     public void switchForecastTab(String nameOfForecast) {
-        driver.findElement(forecastTabsPanel).findElement(By.partialLinkText(nameOfForecast)).click();
+        driver.findElement(forecastTabsPanel).findElement(By.linkText(nameOfForecast)).click();
     }
 
     public void switchStack() {
@@ -147,18 +145,6 @@ public class ForecastViewerPage {
         //that is for tooltip does not cover the button after tooltip is shown
         action.moveToElement(getSubmitButton()).perform();
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("tooltip")));
-    }
-
-    public String getPeriodInterval() {
-        return getPeriodCount().getAttribute("value") + "-" + getPeriodUnit().getAttribute("value");
-    }
-
-    public String getScoreInterval() {
-        return getScoreIntervalCount().getAttribute("value") + "-" + getScoreIntervalUnit().getAttribute("value");
-    }
-
-    public String getForecastHorizonInterval() {
-        return getForecastHorizonCount().getAttribute("value") + "-" + getForecastHorizonUnit().getAttribute("value");
     }
 
     public void setDecomposeOptions(String threshold, String componentCount, String windowLength) {
@@ -255,8 +241,7 @@ public class ForecastViewerPage {
     }
 
     public boolean isForecastAddButtonVisible() {
-        return (Boolean) ((JavascriptExecutor) driver).executeScript("return arguments[0].offsetParent!=null",
-                driver.findElement(addButton));
+        return driver.findElement(addButton).isDisplayed();
     }
 
     public boolean isForecastRemoveButtonPresent() {
@@ -265,19 +250,19 @@ public class ForecastViewerPage {
     }
 
     public boolean isForecastRemoveButtonVisible() {
-        return (Boolean) ((JavascriptExecutor) driver).executeScript("return arguments[0].offsetParent!=null",
-                driver.findElement(removeButton));
+        return driver.findElement(removeButton).isDisplayed();
     }
 
-    public int getCountOfActiveComponentsOfForecast(int forecastNumber) {
+    public int getCountOfActiveComponentsInSingularValueContainer(int forecastNumber) {
         int count = 0;
+        int maxCountOfActiveComponents = 20;
         String componentsAsString = driver.findElement(By.xpath(String.
                 format("//*[@id='summary-container']//tbody/tr[2]/td[%d]", forecastNumber + 1))).getText();
         for (String str : componentsAsString.split(";")) {
             String[] components = str.split("-");
-            if (Integer.parseInt(components[0]) > 20) break;
+            if (Integer.parseInt(components[0]) > maxCountOfActiveComponents) break;
             if (components.length > 1) {
-                if (Integer.parseInt(components[1]) > 20) break;
+                if (Integer.parseInt(components[1]) > maxCountOfActiveComponents) break;
                 count += (Integer.parseInt(components[1]) - Integer.parseInt(components[0]) + 1);
             } else {
                 count++;
@@ -319,8 +304,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupParameterV(String value) {
-        driver.findElement(groupParameterV).clear();
-        driver.findElement(groupParameterV).sendKeys(value);
+        setNumberOption(value, groupParameterV);
     }
 
     public WebElement getGroupParameterC() {
@@ -328,8 +312,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupParameterC(String value) {
-        driver.findElement(groupParameterC).clear();
-        driver.findElement(groupParameterC).sendKeys(value);
+        setNumberOption(value, groupParameterC);
     }
 
     public WebElement getSubmitButton() {
@@ -341,8 +324,7 @@ public class ForecastViewerPage {
     }
 
     public void setAggregation(String value) {
-        Select select = new Select(driver.findElement(aggregation));
-        select.selectByValue(value);
+        setSelectionOption(value, aggregation);
     }
 
     public WebElement getInterpolation() {
@@ -350,8 +332,7 @@ public class ForecastViewerPage {
     }
 
     public void setInterpolation(String value) {
-        Select select = new Select(driver.findElement(interpolation));
-        select.selectByValue(value);
+        setSelectionOption(value, interpolation);
     }
 
     public WebElement getPeriodCount() {
@@ -359,8 +340,7 @@ public class ForecastViewerPage {
     }
 
     public void setPeriodCount(String value) {
-        driver.findElement(periodCount).clear();
-        driver.findElement(periodCount).sendKeys(value);
+        setNumberOption(value, periodCount);
     }
 
     public WebElement getPeriodUnit() {
@@ -378,8 +358,7 @@ public class ForecastViewerPage {
     }
 
     public void setThreshold(String value) {
-        driver.findElement(threshold).clear();
-        driver.findElement(threshold).sendKeys(value);
+        setNumberOption(value, threshold);
     }
 
     public WebElement getComponentCount() {
@@ -387,8 +366,7 @@ public class ForecastViewerPage {
     }
 
     public void setComponentCount(String value) {
-        driver.findElement(componentCount).clear();
-        driver.findElement(componentCount).sendKeys(value);
+        setNumberOption(value, componentCount);
     }
 
     public WebElement getWindowLength() {
@@ -396,8 +374,7 @@ public class ForecastViewerPage {
     }
 
     public void setWindowLength(String value) {
-        driver.findElement(windowLength).clear();
-        driver.findElement(windowLength).sendKeys(value);
+        setNumberOption(value, windowLength);
     }
 
     public boolean getGroupOff() {
@@ -421,8 +398,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupCount(String value) {
-        driver.findElement(groupCount);
-        driver.findElement(groupCount).sendKeys(value);
+        setNumberOption(value, groupCount);
     }
 
     public WebElement getClustering() {
@@ -430,18 +406,15 @@ public class ForecastViewerPage {
     }
 
     public void setClustering(String value) {
-        Select select = new Select(driver.findElement(clustering));
-        select.selectByValue(value);
+        setSelectionOption(value, clustering);
     }
-
 
     public WebElement getGroupUnion1() {
         return driver.findElement(groupUnion1);
     }
 
     public void setGroupUnion1(String value) {
-        driver.findElement(groupUnion1).clear();
-        driver.findElement(groupUnion1).sendKeys(value);
+        setNumberOption(value, groupUnion1);
     }
 
     public WebElement getGroupUnion2() {
@@ -449,8 +422,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupUnion2(String value) {
-        driver.findElement(groupUnion2).clear();
-        driver.findElement(groupUnion2).sendKeys(value);
+        setNumberOption(value, groupUnion2);
     }
 
     public WebElement getGroupUnion3() {
@@ -458,8 +430,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupUnion3(String value) {
-        driver.findElement(groupUnion3).clear();
-        driver.findElement(groupUnion3).sendKeys(value);
+        setNumberOption(value, groupUnion3);
     }
 
     public boolean getGroupManual() {
@@ -475,8 +446,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupComponentIndex1(String value) {
-        driver.findElement(groupComponentIndex1).clear();
-        driver.findElement(groupComponentIndex1).sendKeys(value);
+        setNumberOption(value, groupComponentIndex1);
     }
 
     public WebElement getGroupComponentIndex2() {
@@ -484,8 +454,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupComponentIndex2(String value) {
-        driver.findElement(groupComponentIndex2).clear();
-        driver.findElement(groupComponentIndex2).sendKeys(value);
+        setNumberOption(value, groupComponentIndex2);
     }
 
     public WebElement getGroupComponentIndex3() {
@@ -493,8 +462,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupComponentIndex3(String value) {
-        driver.findElement(groupComponentIndex3).clear();
-        driver.findElement(groupComponentIndex3).sendKeys(value);
+        setNumberOption(value, groupComponentIndex3);
     }
 
     public WebElement getAveragingFunction() {
@@ -502,8 +470,7 @@ public class ForecastViewerPage {
     }
 
     public void setAveragingFunction(String value) {
-        Select select = new Select(driver.findElement(averagingFunction));
-        select.selectByValue(value);
+        setSelectionOption(value, averagingFunction);
     }
 
     public WebElement getScoreIntervalCount() {
@@ -511,8 +478,7 @@ public class ForecastViewerPage {
     }
 
     public void setScoreIntervalCount(String value) {
-        driver.findElement(scoreIntervalCount).clear();
-        driver.findElement(scoreIntervalCount).sendKeys(value);
+        setNumberOption(value, scoreIntervalCount);
     }
 
     public WebElement getScoreIntervalUnit() {
@@ -530,8 +496,7 @@ public class ForecastViewerPage {
     }
 
     public void setStartDate(String value) {
-        driver.findElement(startDate).clear();
-        driver.findElement(startDate).sendKeys(value);
+        setNumberOption(value, startDate);
     }
 
     public WebElement getStartTime() {
@@ -539,8 +504,7 @@ public class ForecastViewerPage {
     }
 
     public void setStartTime(String value) {
-        driver.findElement(startTime).clear();
-        driver.findElement(startTime).sendKeys(value);
+        setNumberOption(value, startTime);
     }
 
     public WebElement getEndDate() {
@@ -548,8 +512,7 @@ public class ForecastViewerPage {
     }
 
     public void setEndDate(String value) {
-        driver.findElement(endDate).clear();
-        driver.findElement(endDate).sendKeys(value);
+        setNumberOption(value, endDate);
     }
 
     public WebElement getEndTime() {
@@ -557,8 +520,7 @@ public class ForecastViewerPage {
     }
 
     public void setEndTime(String value) {
-        driver.findElement(endTime).clear();
-        driver.findElement(endTime).sendKeys(value);
+        setNumberOption(value, endTime);
     }
 
     public WebElement getForecastHorizonCount() {
@@ -566,8 +528,7 @@ public class ForecastViewerPage {
     }
 
     public void setForecastHorizonCount(String value) {
-        driver.findElement(forecastHorizonCount).clear();
-        driver.findElement(forecastHorizonCount).sendKeys(value);
+        setNumberOption(value, forecastHorizonCount);
     }
 
     public WebElement getForecastHorizonUnit() {
@@ -579,4 +540,15 @@ public class ForecastViewerPage {
         intervalInput.findElement(By.tagName("button")).click();
         intervalInput.findElement(By.className("dropdown-menu")).findElement(By.partialLinkText(value)).click();
     }
+
+    private void setNumberOption(String value, By element) {
+        driver.findElement(element).clear();
+        driver.findElement(element).sendKeys(value);
+    }
+
+    private void setSelectionOption(String value, By element) {
+        Select select = new Select(driver.findElement(element));
+        select.selectByValue(value);
+    }
+
 }
