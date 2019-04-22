@@ -62,6 +62,33 @@ public class ForecastPageTest extends AtsdTest {
     }
 
     @Test
+    public void testEigenvaluesWithZeroThresholdOnSmallSample() {
+        try {
+            forecastViewerPage.setStartDate("2019-03-16");
+            forecastViewerPage.setStartTime("16:11:00");
+            forecastViewerPage.setEndDate("2019-03-16");
+            forecastViewerPage.setEndTime("17:11:00");
+            forecastViewerPage.setThreshold("0");
+            forecastViewerPage.setPeriodCount("15");
+            forecastViewerPage.setPeriodUnit("minute");
+            forecastViewerPage.setForecastHorizonCount("1");
+            forecastViewerPage.setForecastHorizonUnit("hour");
+            forecastViewerPage.submitFormAndWait(15);
+
+            assertEquals("There has to be only one silver component", 1,
+                    forecastViewerPage.getCountOfPassiveComponentsInComponentContainer());
+            System.out.println();
+        } catch (AssertionError err) {
+            String filepath = AtsdTest.screenshotDir + "/" +
+                    this.getClass().getSimpleName() + "_" +
+                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
+                    System.currentTimeMillis() + ".png";
+            this.saveScreenshot(filepath);
+            throw err;
+        }
+    }
+
+    @Test
     public void testUnionFieldInvalid() {
         try {
             forecastViewerPage.setGroupAuto();
@@ -1108,7 +1135,6 @@ public class ForecastPageTest extends AtsdTest {
         ((JavascriptExecutor) driver).executeScript(
                 "self.widgetContainerForAtsdTest =  document.getElementById(\"widget-container\").__innerWidget__");
     }
-
 
     private void assertVisibility(String errorMessage, boolean isPresent, boolean isVisible) {
         assertTrue("there is no such element on the page", isPresent);

@@ -219,6 +219,10 @@ public class ForecastViewerPage {
         return driver.findElement(componentContainer).findElements(By.xpath("//*[@fill='green' and not(@class)]")).size();
     }
 
+    public int getCountOfPassiveComponentsInComponentContainer() {
+        return driver.findElement(componentContainer).findElements(By.xpath("//*[@fill='silver' and not(@class)]")).size();
+    }
+
     public String getNameOfForecastInSummaryTable(WebElement forecast) {
         return forecast.findElement(By.xpath("../..")).getText().replace("\n(√λ)", "");
     }
