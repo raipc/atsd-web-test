@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotEquals;
 public class CreatePortalTest extends AtsdTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         login();
     }
 

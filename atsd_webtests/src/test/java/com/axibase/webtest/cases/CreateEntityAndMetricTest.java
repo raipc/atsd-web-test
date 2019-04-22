@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class CreateEntityAndMetricTest extends AtsdTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         login();
     }
 
