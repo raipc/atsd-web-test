@@ -20,6 +20,4 @@ public class MetricsService extends Service {
     public String getMetricByName(String name) {
         return driver.findElement(By.xpath("//*[@id='metricsList']/descendant::tr[td//text()='" + name + "']")).getText();
     }
-
-
 }

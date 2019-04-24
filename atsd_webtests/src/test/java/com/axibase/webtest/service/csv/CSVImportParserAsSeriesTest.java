@@ -23,49 +23,34 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
     @Test
     public void testImportCSVParserPage() {
-        try {
-            setReplaceExisting(false);
-            sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
+        setReplaceExisting(false);
+        sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
 
-            goToCSVParsersPage();
-            assertTrue("Parser is not added into table",
-                    driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
-        } catch (AssertionError err) {
-            String filepath = AtsdTest.screenshotDir + "/" +
-                    this.getClass().getSimpleName() + "_" +
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
-                    System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
-            throw err;
-        }
+        goToCSVParsersPage();
+        assertTrue("Parser is not added into table",
+                driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
+
+        saveCleanup();
     }
 
     @Test
     public void testImportCSVParserWithReplace() {
-        try {
-            setReplaceExisting(false);
-            sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
-            setReplaceExisting(true);
-            sendParserIntoTableWithReplacement(PATH_TO_PARSER);
+        setReplaceExisting(false);
+        sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
+        setReplaceExisting(true);
+        sendParserIntoTableWithReplacement(PATH_TO_PARSER);
 
-            goToCSVParsersPage();
-            assertTrue("Parser is not added into table",
-                    driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
-        } catch (AssertionError err) {
-            String filepath = AtsdTest.screenshotDir + "/" +
-                    this.getClass().getSimpleName() + "_" +
-                    Thread.currentThread().getStackTrace()[1].getMethodName() + "_" +
-                    System.currentTimeMillis() + ".png";
-            this.saveScreenshot(filepath);
-            throw err;
-        }
+        goToCSVParsersPage();
+        assertTrue("Parser is not added into table",
+                driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
+
+        saveCleanup();
     }
 
-    @After
-    public void cleanUp() {
+    private void saveCleanup() {
         deleteParsers();
-        assertEquals("Parsers are not removed", 0,
-                driver.findElements(By.cssSelector("#configurationList > tbody > tr")).size());
+//        assertEquals("Parsers are not removed", 0,
+//                driver.findElements(By.cssSelector("#configurationList > tbody > tr")).size());
     }
 
     private void deleteParsers() {
