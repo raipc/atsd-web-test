@@ -80,7 +80,6 @@ public class ForecastViewerPage {
         return driver.findElement(breadcrumb).findElements(By.tagName("li")).get(elementsNumber);
     }
 
-
     public void submitFormAndWait(int countOfSeconds) {
         driver.findElement(submitButton).click();
         waitUntilSummaryTableIsLoaded(countOfSeconds);
@@ -130,7 +129,6 @@ public class ForecastViewerPage {
     public void switchStack() {
         driver.findElement(stack).click();
     }
-
 
     public void waitUntilTooltipIsShown(WebElement element) {
         Actions action = new Actions(driver);
@@ -183,7 +181,6 @@ public class ForecastViewerPage {
         setScoreIntervalUnit(scoreIntervalUnit);
     }
 
-
     public String getGroupedByURLTags() {
         return driver.findElement(groupingByURL).findElement(By.tagName("ul")).getText();
     }
@@ -233,7 +230,6 @@ public class ForecastViewerPage {
     public List<WebElement> getForecastsTabs() {
         return driver.findElement(forecastTabsPanel).findElements(By.tagName("li"));
     }
-
 
     public boolean isForecastAddButtonPresent() {
         return (Boolean) ((JavascriptExecutor) driver).executeScript("return arguments[0]!=null",
@@ -304,7 +300,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupParameterV(String value) {
-        setNumberOption(value, groupParameterV);
+        setNumericOption(value, driver.findElement(groupParameterV));
     }
 
     public WebElement getGroupParameterC() {
@@ -312,7 +308,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupParameterC(String value) {
-        setNumberOption(value, groupParameterC);
+        setNumericOption(value, driver.findElement(groupParameterC));
     }
 
     public WebElement getSubmitButton() {
@@ -324,7 +320,7 @@ public class ForecastViewerPage {
     }
 
     public void setAggregation(String value) {
-        setSelectionOption(value, aggregation);
+        setSelectionOption(value, driver.findElement(aggregation));
     }
 
     public WebElement getInterpolation() {
@@ -332,7 +328,7 @@ public class ForecastViewerPage {
     }
 
     public void setInterpolation(String value) {
-        setSelectionOption(value, interpolation);
+        setSelectionOption(value, driver.findElement(interpolation));
     }
 
     public WebElement getPeriodCount() {
@@ -340,7 +336,7 @@ public class ForecastViewerPage {
     }
 
     public void setPeriodCount(String value) {
-        setNumberOption(value, periodCount);
+        setNumericOption(value, driver.findElement(periodCount));
     }
 
     public WebElement getPeriodUnit() {
@@ -358,7 +354,7 @@ public class ForecastViewerPage {
     }
 
     public void setThreshold(String value) {
-        setNumberOption(value, threshold);
+        setNumericOption(value, driver.findElement(threshold));
     }
 
     public WebElement getComponentCount() {
@@ -366,7 +362,7 @@ public class ForecastViewerPage {
     }
 
     public void setComponentCount(String value) {
-        setNumberOption(value, componentCount);
+        setNumericOption(value, driver.findElement(componentCount));
     }
 
     public WebElement getWindowLength() {
@@ -374,7 +370,7 @@ public class ForecastViewerPage {
     }
 
     public void setWindowLength(String value) {
-        setNumberOption(value, windowLength);
+        setNumericOption(value, driver.findElement(windowLength));
     }
 
     public boolean getGroupOff() {
@@ -398,7 +394,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupCount(String value) {
-        setNumberOption(value, groupCount);
+        setNumericOption(value, driver.findElement(groupCount));
     }
 
     public WebElement getClustering() {
@@ -406,7 +402,7 @@ public class ForecastViewerPage {
     }
 
     public void setClustering(String value) {
-        setSelectionOption(value, clustering);
+        setSelectionOption(value, driver.findElement(clustering));
     }
 
     public WebElement getGroupUnion1() {
@@ -414,7 +410,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupUnion1(String value) {
-        setNumberOption(value, groupUnion1);
+        setNumericOption(value, driver.findElement(groupUnion1));
     }
 
     public WebElement getGroupUnion2() {
@@ -422,7 +418,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupUnion2(String value) {
-        setNumberOption(value, groupUnion2);
+        setNumericOption(value, driver.findElement(groupUnion2));
     }
 
     public WebElement getGroupUnion3() {
@@ -430,7 +426,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupUnion3(String value) {
-        setNumberOption(value, groupUnion3);
+        setNumericOption(value, driver.findElement(groupUnion3));
     }
 
     public boolean getGroupManual() {
@@ -446,7 +442,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupComponentIndex1(String value) {
-        setNumberOption(value, groupComponentIndex1);
+        setNumericOption(value, driver.findElement(groupComponentIndex1));
     }
 
     public WebElement getGroupComponentIndex2() {
@@ -454,7 +450,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupComponentIndex2(String value) {
-        setNumberOption(value, groupComponentIndex2);
+        setNumericOption(value, driver.findElement(groupComponentIndex2));
     }
 
     public WebElement getGroupComponentIndex3() {
@@ -462,7 +458,7 @@ public class ForecastViewerPage {
     }
 
     public void setGroupComponentIndex3(String value) {
-        setNumberOption(value, groupComponentIndex3);
+        setNumericOption(value, driver.findElement(groupComponentIndex3));
     }
 
     public WebElement getAveragingFunction() {
@@ -470,7 +466,7 @@ public class ForecastViewerPage {
     }
 
     public void setAveragingFunction(String value) {
-        setSelectionOption(value, averagingFunction);
+        setSelectionOption(value, driver.findElement(averagingFunction));
     }
 
     public WebElement getScoreIntervalCount() {
@@ -478,7 +474,7 @@ public class ForecastViewerPage {
     }
 
     public void setScoreIntervalCount(String value) {
-        setNumberOption(value, scoreIntervalCount);
+        setNumericOption(value, driver.findElement(scoreIntervalCount));
     }
 
     public WebElement getScoreIntervalUnit() {
@@ -496,7 +492,7 @@ public class ForecastViewerPage {
     }
 
     public void setStartDate(String value) {
-        setNumberOption(value, startDate);
+        setNumericOption(value, driver.findElement(startDate));
     }
 
     public WebElement getStartTime() {
@@ -504,7 +500,7 @@ public class ForecastViewerPage {
     }
 
     public void setStartTime(String value) {
-        setNumberOption(value, startTime);
+        setNumericOption(value, driver.findElement(startTime));
     }
 
     public WebElement getEndDate() {
@@ -512,7 +508,7 @@ public class ForecastViewerPage {
     }
 
     public void setEndDate(String value) {
-        setNumberOption(value, endDate);
+        setNumericOption(value, driver.findElement(endDate));
     }
 
     public WebElement getEndTime() {
@@ -520,7 +516,7 @@ public class ForecastViewerPage {
     }
 
     public void setEndTime(String value) {
-        setNumberOption(value, endTime);
+        setNumericOption(value, driver.findElement(endTime));
     }
 
     public WebElement getForecastHorizonCount() {
@@ -528,7 +524,7 @@ public class ForecastViewerPage {
     }
 
     public void setForecastHorizonCount(String value) {
-        setNumberOption(value, forecastHorizonCount);
+        setNumericOption(value, driver.findElement(forecastHorizonCount));
     }
 
     public WebElement getForecastHorizonUnit() {
@@ -541,13 +537,13 @@ public class ForecastViewerPage {
         intervalInput.findElement(By.className("dropdown-menu")).findElement(By.partialLinkText(value)).click();
     }
 
-    private void setNumberOption(String value, By element) {
-        driver.findElement(element).clear();
-        driver.findElement(element).sendKeys(value);
+    public void setNumericOption(String value, WebElement element) {
+        element.clear();
+        element.sendKeys(value);
     }
 
-    private void setSelectionOption(String value, By element) {
-        Select select = new Select(driver.findElement(element));
+    public void setSelectionOption(String value, WebElement element) {
+        Select select = new Select(element);
         select.selectByValue(value);
     }
 
