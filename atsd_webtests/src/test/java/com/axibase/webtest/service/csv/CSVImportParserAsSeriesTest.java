@@ -1,13 +1,15 @@
 package com.axibase.webtest.service.csv;
 
+import com.axibase.webtest.CommonAssertions;
 import com.axibase.webtest.service.AtsdTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -23,37 +25,41 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
     @Test
     public void testImportCSVParserPage() {
-        setReplaceExisting(false);
-        sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
+        try {
+            setReplaceExisting(false);
+            sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
 
-        goToCSVParsersPage();
-        assertTrue("Parser is not added into table",
-                driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
+            goToCSVParsersPage();
 
-        saveCleanup();
+            final boolean isParserPresented = Optional.of(driver)
+                    .map(d -> d.findElement(By.cssSelector("#configurationList > tbody")))
+                    .map(WebElement::getText)
+                    .map(text -> text.contains(PARSER_NAME))
+                    .orElse(false);
+            assertTrue("Parser is not added into table", isParserPresented);
+        } finally {
+            safeCleanup();
+        }
+
     }
 
     @Test
     public void testImportCSVParserWithReplace() {
-        setReplaceExisting(false);
-        sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
-        setReplaceExisting(true);
-        sendParserIntoTableWithReplacement(PATH_TO_PARSER);
+        try {
+            setReplaceExisting(false);
+            sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
+            setReplaceExisting(true);
+            sendParserIntoTableWithReplacement(PATH_TO_PARSER);
 
-        goToCSVParsersPage();
-        assertTrue("Parser is not added into table",
-                driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
-
-        saveCleanup();
+            goToCSVParsersPage();
+            assertTrue("Parser is not added into table",
+                    driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
+        } finally {
+            safeCleanup();
+        }
     }
 
-    private void saveCleanup() {
-        deleteParsers();
-//        assertEquals("Parsers are not removed", 0,
-//                driver.findElements(By.cssSelector("#configurationList > tbody > tr")).size());
-    }
-
-    private void deleteParsers() {
+    private void safeCleanup() {
         setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select all']")), true);
         driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
         driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
@@ -83,14 +89,14 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     private void goToCSVParsersPage() {
         driver.findElement(By.linkText("Data")).click();
         driver.findElement(By.linkText("CSV Parsers")).click();
-        assertEquals("Wrong page", driver.getCurrentUrl(), url + "/csv/configs");
+        CommonAssertions.assertPageUrl(url + "/csv/configs", driver.getCurrentUrl());
     }
 
     private void goToCSVParsersImportPage() {
         goToCSVParsersPage();
         driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
         driver.findElement(By.xpath("//*/a[text()='Import']")).click();
-        assertEquals("Wrong page", driver.getCurrentUrl(), url + "/csv/configs/import");
+        CommonAssertions.assertPageUrl(url + "/csv/configs/import", driver.getCurrentUrl());
     }
 
     private void setCheckbox(WebElement webElement, boolean on) {

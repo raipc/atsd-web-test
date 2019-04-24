@@ -43,4 +43,14 @@ public class CommonAssertions {
         assertEquals(errorMessage, correctValue, element.getAttribute("value"));
     }
 
+    /**
+     * Compare current url with what should be
+     *
+     * @param correctUrl - url that should be
+     * @param currentUrl - driver current url
+     */
+    public static void assertPageUrl(String correctUrl, String currentUrl) {
+        assertEquals("Wrong page", correctUrl, currentUrl);
+    }
+
 }

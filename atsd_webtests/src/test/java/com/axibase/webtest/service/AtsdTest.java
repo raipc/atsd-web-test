@@ -13,13 +13,13 @@ import java.util.Properties;
  * Created by sild on 02.02.15.
  */
 public class AtsdTest {
-
     protected static WebDriver driver;
     protected static final String propertypath = "atsd.properties";
     protected static String login;
     protected static String password;
     protected static String url;
     protected static String screenshotDir;
+    private final static String CHROME_DRIVER_PROPERTY_NAME = "webdriver.chrome.driver";
 
     @Rule
     public final ActionOnTestState action = new ActionOnTestState();
@@ -38,9 +38,9 @@ public class AtsdTest {
                 System.exit(1);
             }
 
-            String chromedriverPath = properties.getProperty("webdriver.chrome.driver");
+            String chromedriverPath = properties.getProperty(CHROME_DRIVER_PROPERTY_NAME);
             if (chromedriverPath != null) {
-                System.setProperty("webdriver.chrome.driver", chromedriverPath);
+                System.setProperty(CHROME_DRIVER_PROPERTY_NAME, chromedriverPath);
             }
         } catch (IOException e) {
             System.out.println("Can't read property file");
