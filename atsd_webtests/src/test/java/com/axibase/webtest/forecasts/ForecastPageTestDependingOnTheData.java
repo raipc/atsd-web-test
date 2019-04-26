@@ -62,16 +62,16 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
 
     @Test
     public void testEigenvaluesWithZeroThresholdOnSmallSample() {
-        forecastViewerPage.setStartDate("2019-03-16");
-        forecastViewerPage.setStartTime("16:11:00");
-        forecastViewerPage.setEndDate("2019-03-16");
-        forecastViewerPage.setEndTime("17:11:00");
-        forecastViewerPage.setThreshold("0");
-        forecastViewerPage.setPeriodCount("15");
-        forecastViewerPage.setPeriodUnit("minute");
-        forecastViewerPage.setForecastHorizonCount("1");
-        forecastViewerPage.setForecastHorizonUnit("hour");
-        forecastViewerPage.submitFormAndWait(15);
+        forecastViewerPage.setStartDate("2019-03-16")
+                .setStartTime("16:11:00")
+                .setEndDate("2019-03-16")
+                .setEndTime("17:11:00")
+                .setThreshold("0")
+                .setPeriodCount("15")
+                .setPeriodUnit("minute")
+                .setForecastHorizonCount("1")
+                .setForecastHorizonUnit("hour")
+                .submitFormAndWait(15);
 
         assertEquals("Should be only one silver component", 1,
                 forecastViewerPage.getCountOfPassiveComponentsInComponentContainer());
@@ -195,10 +195,10 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
 
     @Test
     public void testChangeActiveSummary() {
-        forecastViewerPage.setGroupAuto();
-        forecastViewerPage.setGroupCount("11");
-        forecastViewerPage.setComponentCount("19");
-        forecastViewerPage.submitFormAndWait(20);
+        forecastViewerPage.setGroupAuto()
+                .setGroupCount("11")
+                .setComponentCount("19")
+                .submitFormAndWait(20);
 
         List<WebElement> forecastSingularValues = forecastViewerPage.getSummaryContainerForecastsSingularValueLinks();
         WebElement componentContainer = forecastViewerPage.getComponentContainer();
@@ -212,35 +212,35 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
 
     @Test
     public void testActiveRegularizeOptionsCloning() {
-        forecastViewerPage.setRegularizeOptions("PERCENTILE_99", "PREVIOUS", "20", "minute");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setRegularizeOptions("PERCENTILE_99", "PREVIOUS", "20", "minute")
+                .addForecastTab();
         assertRegularizeOptionValues("PERCENTILE_99", "PREVIOUS", "20", "minute", "cloning");
     }
 
     @Test
     public void testActiveDecomposeOptionsCloning() {
-        forecastViewerPage.setDecomposeOptions("10", "12", "44");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setDecomposeOptions("10", "12", "44")
+                .addForecastTab();
         assertDecomposeOptionValues("10", "12", "44", "cloning");
     }
 
     @Test
     public void testActiveForecastOptionsCloning() {
-        forecastViewerPage.setForecastOptions("MEDIAN", "10", "year");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setForecastOptions("MEDIAN", "10", "year")
+                .addForecastTab();
         assertForecastOptions("MEDIAN", "10", "year", "cloning");
     }
 
     @Test
     public void testSwitchTabsRegularizeOptions() {
-        forecastViewerPage.setRegularizeOptions("PERCENTILE_99", "PREVIOUS", "20", "minute");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setRegularizeOptions("PERCENTILE_99", "PREVIOUS", "20", "minute")
+                .addForecastTab();
 
         String[] names = forecastViewerPage.getForecastTabNames();
         assertNotEquals("Forecast names in tabs are equals but they shouldn't be", names[0], names[1]);
 
-        forecastViewerPage.setRegularizeOptions("SUM", "LINEAR", "10", "hour");
-        forecastViewerPage.switchForecastTab("Forecast 1");
+        forecastViewerPage.setRegularizeOptions("SUM", "LINEAR", "10", "hour")
+                .switchForecastTab("Forecast 1");
         assertRegularizeOptionValues("PERCENTILE_99", "PREVIOUS", "20", "minute", "switching");
         forecastViewerPage.switchForecastTab("Forecast 2");
         assertRegularizeOptionValues("SUM", "LINEAR", "10", "hour", "switching");
@@ -248,10 +248,10 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
 
     @Test
     public void testSwitchTabsDecomposeOptions() {
-        forecastViewerPage.setDecomposeOptions("10", "12", "44");
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setDecomposeOptions("20", "15", "2");
-        forecastViewerPage.switchForecastTab("Forecast 1");
+        forecastViewerPage.setDecomposeOptions("10", "12", "44")
+                .addForecastTab()
+                .setDecomposeOptions("20", "15", "2")
+                .switchForecastTab("Forecast 1");
         assertDecomposeOptionValues("10", "12", "44", "switching");
         forecastViewerPage.switchForecastTab("Forecast 2");
         assertDecomposeOptionValues("20", "15", "2", "switching");
@@ -259,10 +259,10 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
 
     @Test
     public void testSwitchTabsForecastOptions() {
-        forecastViewerPage.setForecastOptions("MEDIAN", "10", "year");
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setForecastOptions("AVG", "11", "minute");
-        forecastViewerPage.switchForecastTab("Forecast 1");
+        forecastViewerPage.setForecastOptions("MEDIAN", "10", "year")
+                .addForecastTab()
+                .setForecastOptions("AVG", "11", "minute")
+                .switchForecastTab("Forecast 1");
         assertForecastOptions("MEDIAN", "10", "year", "switching");
         forecastViewerPage.switchForecastTab("Forecast 2");
         assertForecastOptions("AVG", "11", "minute", "switching");
@@ -271,56 +271,56 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
     @Test
     public void testCountOfGroups() {
         String countOfGroups = "11";
-        forecastViewerPage.setGroupAuto();
-        forecastViewerPage.setGroupCount(countOfGroups);
-        forecastViewerPage.setComponentCount("19");
-        forecastViewerPage.submitFormAndWait(20);
+        forecastViewerPage.setGroupAuto()
+                .setGroupCount(countOfGroups)
+                .setComponentCount("19")
+                .submitFormAndWait(20);
         int countInPic = forecastViewerPage.getCountOfForecastsInWidgetContainer();
         assertEquals("Wrong count of groups on the chart", countOfGroups, Integer.toString(countInPic));
     }
 
     @Test
     public void testPresenceOfForecastsInSummary() {
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.submitFormAndWait(20);
+        forecastViewerPage.addForecastTab()
+                .submitFormAndWait(20);
         int forecastCountInSummary = forecastViewerPage.getSummaryContainerForecastsSingularValueLinks().size();
         assertEquals("Wrong count of history charts in summary", 2, forecastCountInSummary);
     }
 
     @Test
     public void testPresenceOfHistoryChartsInPicWithDifferentPeriods() {
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setPeriodCount("20");
-        forecastViewerPage.submitFormAndWait(20);
+        forecastViewerPage.addForecastTab()
+                .setPeriodCount("20")
+                .submitFormAndWait(20);
         int forecastCountInChart = forecastViewerPage.getCountOfHistoryChartsInWidgetContainer();
         assertEquals("Wrong count of history charts in chart", 2, forecastCountInChart);
     }
 
     @Test
     public void testPresenceOfHistoryChartsInPicWithDifferentAggregation() {
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setAggregation("SUM");
-        forecastViewerPage.submitFormAndWait(20);
+        forecastViewerPage.addForecastTab()
+                .setAggregation("SUM")
+                .submitFormAndWait(20);
         int forecastCountInChart = forecastViewerPage.getCountOfHistoryChartsInWidgetContainer();
         assertEquals("Wrong count of history charts in chart", 2, forecastCountInChart);
     }
 
     @Test
     public void testPresenceOfHistoryChartsInPicWithDifferentInterpolation() {
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setInterpolation("PREVIOUS");
-        forecastViewerPage.submitFormAndWait(20);
+        forecastViewerPage.addForecastTab()
+                .setInterpolation("PREVIOUS")
+                .submitFormAndWait(20);
         int forecastCountInChart = forecastViewerPage.getCountOfHistoryChartsInWidgetContainer();
         assertEquals("Wrong count of history charts in chart", 2, forecastCountInChart);
     }
 
     @Test
     public void testNamesInSummary() {
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.switchForecastTab("Forecast 2");
-        forecastViewerPage.removeForecastTab();
-        forecastViewerPage.submitFormAndWait(25);
+        forecastViewerPage.addForecastTab()
+                .addForecastTab()
+                .switchForecastTab("Forecast 2")
+                .removeForecastTab()
+                .submitFormAndWait(25);
 
         String[] names = forecastViewerPage.getForecastTabNames();
         List<String> forecastNames = forecastViewerPage.getSummaryContainerForecastNames();

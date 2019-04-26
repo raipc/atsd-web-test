@@ -40,9 +40,9 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testUnionFieldInvalid() {
-        forecastViewerPage.setGroupAuto();
-        forecastViewerPage.setGroupCount("1");
-        forecastViewerPage.switchStack();
+        forecastViewerPage.setGroupAuto()
+                .setGroupCount("1")
+                .switchStack();
         String[] variants = {"Aa", "A1", "A.2", "a", ".A", "1", "и", "AA-", "A:", "A,"};
         for (String variant : variants) {
             forecastViewerPage.setGroupUnion2(variant);
@@ -53,9 +53,9 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testUnionFieldValid() {
-        forecastViewerPage.setGroupAuto();
-        forecastViewerPage.setGroupCount("1");
-        forecastViewerPage.switchStack();
+        forecastViewerPage.setGroupAuto()
+                .setGroupCount("1")
+                .switchStack();
         String[] variants = {"AA", "A", "AA;A", "A-AA", "A;B-A"};
         for (String variant : variants) {
             forecastViewerPage.setGroupUnion2(variant);
@@ -102,9 +102,9 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testPresenceOfTooltipsInGroupBlock() {
-        forecastViewerPage.setGroupAuto();
-        forecastViewerPage.setGroupCount("1");
-        forecastViewerPage.switchStack();
+        forecastViewerPage.setGroupAuto()
+                .setGroupCount("1")
+                .switchStack();
 
         forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getGroupCount()));
         forecastViewerPage.waitUntilTooltipIsShown(CommonSelects.getElementTooltipByFor(forecastViewerPage.getClustering()));
@@ -138,8 +138,8 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testCloneButtonWithErrorInForm() {
-        forecastViewerPage.setThreshold("100");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setThreshold("100")
+                .addForecastTab();
         assertEquals("New tab is created but there is an error in the form", 1,
                 forecastViewerPage.getForecastTabNames().length);
     }
@@ -160,16 +160,16 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testFromMaxToMinTabsButtonsCase() {
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.addForecastTab()
+                .addForecastTab()
+                .addForecastTab()
+                .addForecastTab();
 
         assertCountOfForecasts(5);
-        forecastViewerPage.removeForecastTab();
-        forecastViewerPage.removeForecastTab();
-        forecastViewerPage.removeForecastTab();
-        forecastViewerPage.removeForecastTab();
+        forecastViewerPage.removeForecastTab()
+                .removeForecastTab()
+                .removeForecastTab()
+                .removeForecastTab();
         assertCountOfForecasts(1);
         assertInvisibility("Remove button is broken:", forecastViewerPage.isForecastRemoveButtonPresent(),
                 forecastViewerPage.isForecastRemoveButtonVisible());
@@ -180,10 +180,10 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
         assertInvisibility("Remove button is broken:", forecastViewerPage.isForecastRemoveButtonPresent(),
                 forecastViewerPage.isForecastRemoveButtonVisible());
         assertCountOfForecasts(1);
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.addForecastTab()
+                .addForecastTab()
+                .addForecastTab()
+                .addForecastTab();
         assertCountOfForecasts(5);
         assertInvisibility("Add button is broken:", forecastViewerPage.isForecastAddButtonPresent(),
                 forecastViewerPage.isForecastAddButtonVisible());
@@ -198,8 +198,8 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
                 forecastViewerPage.isForecastRemoveButtonVisible());
         assertVisibility("Add button is broken:", forecastViewerPage.isForecastAddButtonPresent(),
                 forecastViewerPage.isForecastAddButtonVisible());
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.removeForecastTab();
+        forecastViewerPage.addForecastTab()
+                .removeForecastTab();
         assertCountOfForecasts(2);
         forecastViewerPage.removeForecastTab();
         assertCountOfForecasts(1);
@@ -220,17 +220,17 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testActiveGroupOffOptionsCloning() {
-        forecastViewerPage.setGroupOff();
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setGroupOff()
+                .addForecastTab();
         assertTrue("Wrong grouping mode", forecastViewerPage.getGroupOff());
     }
 
     @Test
     public void testActiveGroupAutoOptionsCloning() {
-        forecastViewerPage.setGroupAutoOptions("10", "NOVOSIBIRSK", "A", "", "B-C;D");
-        forecastViewerPage.setGroupParameterV("0.9");
-        forecastViewerPage.setGroupParameterC("0.8");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setGroupAutoOptions("10", "NOVOSIBIRSK", "A", "", "B-C;D")
+                .setGroupParameterV("0.9")
+                .setGroupParameterC("0.8")
+                .addForecastTab();
         assertTrue("Wrong grouping mode", forecastViewerPage.getGroupAuto());
         assertGroupAutoOptions("10", "NOVOSIBIRSK", "A", "", "B-C;D", "cloning");
         CommonAssertions.assertValueAttributeOfElement("Wrong v parameter after cloning", "0.9",
@@ -241,19 +241,19 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     @Test
     public void testActiveGroupManualOptionsCloning() {
-        forecastViewerPage.setGroupManualOptions("2-3", "", "2-4");
-        forecastViewerPage.addForecastTab();
+        forecastViewerPage.setGroupManualOptions("2-3", "", "2-4")
+                .addForecastTab();
         assertGroupManualOptions("2-3", "", "2-4", "cloning");
     }
 
     @Test
     public void testSwitchTabsGroupsOptions() {
-        forecastViewerPage.setGroupOff();
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setGroupAutoOptions("10", "NOVOSIBIRSK", "A", "", "B-C;D");
-        forecastViewerPage.addForecastTab();
-        forecastViewerPage.setGroupManualOptions("2-3", "", "2-4");
-        forecastViewerPage.switchForecastTab("Forecast 1");
+        forecastViewerPage.setGroupOff()
+                .addForecastTab()
+                .setGroupAutoOptions("10", "NOVOSIBIRSK", "A", "", "B-C;D")
+                .addForecastTab()
+                .setGroupManualOptions("2-3", "", "2-4")
+                .switchForecastTab("Forecast 1");
         assertTrue("Wrong grouping mode", forecastViewerPage.getGroupOff());
         forecastViewerPage.switchForecastTab("Forecast 2");
         assertTrue("Wrong grouping mode", forecastViewerPage.getGroupAuto());
@@ -309,8 +309,8 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
     @Test
     public void testSubmitButtonWithThresholdErrorInForm() {
         storeCurrentWidgetContainerInJS();
-        forecastViewerPage.setThreshold("100");
-        forecastViewerPage.clickSubmitButton();
+        forecastViewerPage.setThreshold("100")
+                .clickSubmitButton();
         isStoredWidgetContainerEqualsNew();
         assertTrue("Submit button was submitted but there is an error in the form",
                 isStoredWidgetContainerEqualsNew());
@@ -319,8 +319,8 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
     @Test
     public void testSubmitButtonWithWindowLengthErrorInForm() {
         storeCurrentWidgetContainerInJS();
-        forecastViewerPage.setWindowLength("100");
-        forecastViewerPage.clickSubmitButton();
+        forecastViewerPage.setWindowLength("100")
+                .clickSubmitButton();
         assertTrue("Submit button was submitted but there is an error in the form",
                 isStoredWidgetContainerEqualsNew());
     }
@@ -328,10 +328,10 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
     @Test
     public void testSubmitButtonWithComponentCountAndCountOfGroupsErrorInForm() {
         storeCurrentWidgetContainerInJS();
-        forecastViewerPage.setGroupAuto();
-        forecastViewerPage.setComponentCount("1");
-        forecastViewerPage.setGroupCount("10");
-        forecastViewerPage.clickSubmitButton();
+        forecastViewerPage.setGroupAuto()
+                .setComponentCount("1")
+                .setGroupCount("10")
+                .clickSubmitButton();
         assertTrue("Submit button was submitted but there is an error in the form",
                 isStoredWidgetContainerEqualsNew());
     }
