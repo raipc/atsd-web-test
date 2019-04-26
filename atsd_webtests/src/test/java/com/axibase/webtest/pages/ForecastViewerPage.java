@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-@Builder
 public class ForecastViewerPage {
     private WebDriver driver;
 
