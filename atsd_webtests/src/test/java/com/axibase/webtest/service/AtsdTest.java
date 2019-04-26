@@ -22,7 +22,7 @@ public class AtsdTest {
     private final static String CHROME_DRIVER_PROPERTY_NAME = "webdriver.chrome.driver";
 
     @Rule
-    public final ActionOnTestState action = new ActionOnTestState();
+    public final ActionOnTestState action = new ActionOnTestState(this);
 
     @BeforeClass
     public static void readConfig() {
@@ -49,10 +49,7 @@ public class AtsdTest {
         }
     }
 
-    public static void cleanup() {
-        if (driver != null) {
-            driver.close();
-        }
+    public void cleanup() {
     }
 
     protected String generateAssertMessage(String thread) {

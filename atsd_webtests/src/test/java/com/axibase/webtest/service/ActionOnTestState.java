@@ -15,6 +15,12 @@ import java.util.concurrent.TimeUnit;
 
 public class ActionOnTestState extends TestWatcher {
 
+    private AtsdTest testClassObject;
+
+    public ActionOnTestState(AtsdTest testClassObject) {
+        this.testClassObject = testClassObject;
+    }
+
     @Override
     protected void failed(Throwable e, Description description) {
         if (AtsdTest.driver != null) { // driver = null for ExportServiceTest methods
@@ -28,6 +34,7 @@ public class ActionOnTestState extends TestWatcher {
     @Override
     protected void finished(Description description) {
         if (AtsdTest.driver != null) { // driver = null for ExportServiceTest methods
+            testClassObject.cleanup();
             LoginService ls = new LoginService(AtsdTest.driver);
             ls.logout();
         }
@@ -61,4 +68,5 @@ public class ActionOnTestState extends TestWatcher {
             System.out.println("Can't save screenshot to '" + filepath + "'");
         }
     }
+
 }

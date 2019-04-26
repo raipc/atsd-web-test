@@ -25,48 +25,39 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
     @Test
     public void testImportCSVParserPage() {
-        try {
-            setReplaceExisting(false);
-            sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
+        setReplaceExisting(false);
+        sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
 
-            goToCSVParsersPage();
+        goToCSVParsersPage();
 
-            final boolean isParserPresented = Optional.of(driver)
-                    .map(d -> d.findElement(By.cssSelector("#configurationList > tbody")))
-                    .map(WebElement::getText)
-                    .map(text -> text.contains(PARSER_NAME))
-                    .orElse(false);
-            assertTrue("Parser is not added into table", isParserPresented);
-        } finally {
-            safeCleanup();
-        }
-
+        final boolean isParserPresented = Optional.of(driver)
+                .map(d -> d.findElement(By.cssSelector("#configurationList > tbody")))
+                .map(WebElement::getText)
+                .map(text -> text.contains(PARSER_NAME))
+                .orElse(false);
+        assertTrue("Parser is not added into table", isParserPresented);
     }
 
     @Test
     public void testImportCSVParserWithReplace() {
-        try {
-            setReplaceExisting(false);
-            sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
-            setReplaceExisting(true);
-            sendParserIntoTableWithReplacement(PATH_TO_PARSER);
+        setReplaceExisting(false);
+        sendParserIntoTableWithoutReplacement(PATH_TO_PARSER);
+        setReplaceExisting(true);
+        sendParserIntoTableWithReplacement(PATH_TO_PARSER);
 
-            goToCSVParsersPage();
-            assertTrue("Parser is not added into table",
-                    driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
-        } finally {
-            safeCleanup();
-        }
+        goToCSVParsersPage();
+        assertTrue("Parser is not added into table",
+                driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
     }
 
-    private void safeCleanup() {
+    @Override
+    public void cleanup() {
+        goToCSVParsersPage();
         setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select all']")), true);
         driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
         driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
-
         WebDriverWait wait = new WebDriverWait(driver, 1);
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")));
-
         driver.findElement(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")).click();
     }
 
