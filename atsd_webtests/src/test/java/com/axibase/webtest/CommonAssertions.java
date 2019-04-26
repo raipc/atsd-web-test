@@ -1,7 +1,5 @@
 package com.axibase.webtest;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import static org.junit.Assert.*;
@@ -9,48 +7,48 @@ import static org.junit.Assert.*;
 public class CommonAssertions {
 
     /**
-     * Check that element is valid
+     * Check that element passes HTML validation
      *
      * @param errorMessage - message that will be shown if element is invalid
-     * @param driver       - web driver
      * @param element      - element that will be checked
      */
-    public static void assertValid(String errorMessage, WebDriver driver, WebElement element) {
-        assertTrue(errorMessage, (Boolean) ((JavascriptExecutor) driver).
-                executeScript("return arguments[0].checkValidity()", element));
+    public static void assertValid(String errorMessage, WebElement element) {
+        String script = "return element.checkValidity()";
+        Boolean result = ElementUtils.executeWithElement(element, script);
+        assertTrue(errorMessage, result);
     }
 
     /**
-     * Check that element is invalid
+     * Check that element doesn't passes HTML validation
      *
      * @param errorMessage - message that will be shown if element is valid
-     * @param driver       - web driver
      * @param element      - element that will be checked
      */
-    public static void assertInvalid(String errorMessage, WebDriver driver, WebElement element) {
-        assertFalse(errorMessage, (Boolean) ((JavascriptExecutor) driver).
-                executeScript("return arguments[0].checkValidity()", element));
+    public static void assertInvalid(String errorMessage, WebElement element) {
+        String script = "return element.checkValidity()";
+        Boolean result = ElementUtils.executeWithElement(element, script);
+        assertFalse(errorMessage, result);
     }
 
     /**
      * Compare element's value and expected value
      *
-     * @param errorMessage - message that will be shown if element is valid
-     * @param correctValue - expected value
-     * @param -            element that will be checked
+     * @param errorMessage  - message that will be shown if element is valid
+     * @param expectedValue - expected value
+     * @param -             element that will be checked
      */
-    public static void assertValueAttributeOfElement(String errorMessage, String correctValue, WebElement element) {
-        assertEquals(errorMessage, correctValue, element.getAttribute("value"));
+    public static void assertValueAttributeOfElement(String errorMessage, String expectedValue, WebElement element) {
+        assertEquals(errorMessage, expectedValue, element.getAttribute("value"));
     }
 
     /**
      * Compare current url with what should be
      *
-     * @param correctUrl - url that should be
-     * @param currentUrl - driver current url
+     * @param expectedUrl - url that should be
+     * @param currentUrl  - driver current url
      */
-    public static void assertPageUrl(String correctUrl, String currentUrl) {
-        assertEquals("Wrong page", correctUrl, currentUrl);
+    public static void assertPageUrl(String expectedUrl, String currentUrl) {
+        assertEquals("Wrong page", expectedUrl, currentUrl);
     }
 
 }

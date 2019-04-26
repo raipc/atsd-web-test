@@ -10,13 +10,16 @@ public class CommonActions {
     /**
      * Find CodeMirror editor window and send text to it
      *
-     * @param driver - web driver
-     * @param siblingElement - next to the CodeMirror element
-     * @param text - text to send
+     * @param relatedTextArea - next to the CodeMirror element
+     * @param text            - text to send
      */
-    public static void sendTextToCodeMirror(WebDriver driver, WebElement siblingElement, String text) {
+    public static void sendTextToCodeMirror(WebElement relatedTextArea, String text) {
+        if (!relatedTextArea.getTagName().equals("textarea")) {
+            throw new IllegalStateException("his is not a textarea");
+        }
+        WebDriver driver = ElementUtils.getConnectedDriver(relatedTextArea);
         Actions builder = new Actions(driver);
-        builder.sendKeys(siblingElement.findElement(By.xpath("./following-sibling::*[contains(@class,CodeMirror)]")),
+        builder.sendKeys(relatedTextArea.findElement(By.xpath("./following-sibling::*[contains(@class,CodeMirror)]")),
                 text).build().perform();
     }
 

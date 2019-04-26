@@ -30,7 +30,7 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
 
     private void loadData() {
         driver.get(AtsdTest.url + "/metrics/entry");
-        CommonActions.sendTextToCodeMirror(driver, driver.findElement(By.name("commands")), "<#list 1..5 as i>\n" +
+        CommonActions.sendTextToCodeMirror(driver.findElement(By.name("commands")), "<#list 1..5 as i>\n" +
                 "series s:${1425482080 - i * 600} " +
                 "e:entity-for-regardless-of-data-test " +
                 "m:metric-for-regardless-of-data-test=${60 - 2*i}\n" +
@@ -47,7 +47,7 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
         for (String variant : variants) {
             forecastViewerPage.setGroupUnion2(variant);
             CommonAssertions.assertInvalid("Invalid variant:" + variant + " is accepted",
-                    driver, forecastViewerPage.getGroupUnion2());
+                    forecastViewerPage.getGroupUnion2());
         }
     }
 
@@ -60,7 +60,7 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
         for (String variant : variants) {
             forecastViewerPage.setGroupUnion2(variant);
             CommonAssertions.assertValid("Valid variant:" + variant + " is not accepted",
-                    driver, forecastViewerPage.getGroupUnion2());
+                    forecastViewerPage.getGroupUnion2());
         }
     }
 
@@ -71,7 +71,7 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
         for (String variant : variants) {
             forecastViewerPage.setGroupComponentIndex1(variant);
             CommonAssertions.assertInvalid("Invalid variant:" + variant + " is accepted",
-                    driver, forecastViewerPage.getGroupComponentIndex1());
+                    forecastViewerPage.getGroupComponentIndex1());
         }
     }
 
@@ -82,7 +82,7 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
         for (String variant : variants) {
             forecastViewerPage.setGroupComponentIndex1(variant);
             CommonAssertions.assertValid("Valid variant:" + variant + " is not accepted",
-                    driver, forecastViewerPage.getGroupComponentIndex1());
+                    forecastViewerPage.getGroupComponentIndex1());
         }
     }
 
@@ -288,21 +288,21 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
     @Test
     public void componentCountAndGroupCountComparisonTest() {
         forecastViewerPage.setGroupAuto();
-        CommonAssertions.assertValid("The Group Count is validated but it have not to", driver,
+        CommonAssertions.assertValid("The Group Count is validated but it have not to",
                 forecastViewerPage.getGroupCount());
         forecastViewerPage.getComponentCount().sendKeys("3");
         forecastViewerPage.getGroupCount().sendKeys("10");
         forecastViewerPage.clickSubmitButton();
-        CommonAssertions.assertInvalid("The Group Count is not validated but it have to", driver,
+        CommonAssertions.assertInvalid("The Group Count is not validated but it have to",
                 forecastViewerPage.getGroupCount());
     }
 
     @Test
     public void componentThresholdBoundValidationTest() {
-        CommonAssertions.assertValid("The Component Threshold is validated but it have not to", driver,
+        CommonAssertions.assertValid("The Component Threshold is validated but it have not to",
                 forecastViewerPage.getThreshold());
         forecastViewerPage.setThreshold("100");
-        CommonAssertions.assertInvalid("The Component Threshold is not validated but it have to", driver,
+        CommonAssertions.assertInvalid("The Component Threshold is not validated but it have to",
                 forecastViewerPage.getThreshold());
     }
 
