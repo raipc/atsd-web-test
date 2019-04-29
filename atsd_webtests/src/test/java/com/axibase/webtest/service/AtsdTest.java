@@ -13,16 +13,16 @@ import java.util.Properties;
  * Created by sild on 02.02.15.
  */
 public class AtsdTest {
-
     protected static WebDriver driver;
     protected static final String propertypath = "atsd.properties";
     protected static String login;
     protected static String password;
     protected static String url;
     protected static String screenshotDir;
+    private final static String CHROME_DRIVER_PROPERTY_NAME = "webdriver.chrome.driver";
 
     @Rule
-    public final ActionOnTestState action = new ActionOnTestState();
+    public final ActionOnTestState action = new ActionOnTestState(this);
 
     @BeforeClass
     public static void readConfig() {
@@ -38,9 +38,9 @@ public class AtsdTest {
                 System.exit(1);
             }
 
-            String phantomjsBinary = properties.getProperty("phantomjs.binary.path");
-            if (phantomjsBinary != null) {
-                System.setProperty("phantomjs.binary.path", phantomjsBinary);
+            String chromedriverPath = properties.getProperty(CHROME_DRIVER_PROPERTY_NAME);
+            if (chromedriverPath != null) {
+                System.setProperty(CHROME_DRIVER_PROPERTY_NAME, chromedriverPath);
             }
         } catch (IOException e) {
             System.out.println("Can't read property file");
@@ -49,10 +49,7 @@ public class AtsdTest {
         }
     }
 
-    public static void cleanup() {
-        if (driver != null) {
-            driver.close();
-        }
+    public void cleanup() {
     }
 
     protected String generateAssertMessage(String thread) {

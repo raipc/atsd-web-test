@@ -6,15 +6,20 @@ import org.junit.runner.Description;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class ActionOnTestState extends TestWatcher {
+
+    private AtsdTest testClassObject;
+
+    public ActionOnTestState(AtsdTest testClassObject) {
+        this.testClassObject = testClassObject;
+    }
 
     @Override
     protected void failed(Throwable e, Description description) {
@@ -29,6 +34,7 @@ public class ActionOnTestState extends TestWatcher {
     @Override
     protected void finished(Description description) {
         if (AtsdTest.driver != null) { // driver = null for ExportServiceTest methods
+            testClassObject.cleanup();
             LoginService ls = new LoginService(AtsdTest.driver);
             ls.logout();
         }
@@ -36,17 +42,13 @@ public class ActionOnTestState extends TestWatcher {
 
     @Override
     protected void starting(Description description) {
-        DesiredCapabilities dcap = new DesiredCapabilities();
-        String[] phantomArgs = new String[]{"--webdriver-loglevel=WARN"};
-        dcap.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, phantomArgs);
-//
-//        System.setProperty("webdriver.chrome.driver", "/opt/chromedriver/chromedriver");
-//        dcap.setCapability("chrome.switches", Lists.newArrayList("--homepage=about:blank",
-//                "--no-first-run"));
+        ChromeOptions opts = new ChromeOptions();
+        opts.addArguments("--headless");
+        opts.addArguments("--no-sandbox");
+        opts.addArguments("--window-size=1280,720");
         if (AtsdTest.driver == null) { // driver = null for ExportServiceTest methods
-            AtsdTest.driver = new PhantomJSDriver(dcap);
+            AtsdTest.driver = new ChromeDriver(opts);
             AtsdTest.driver.manage().window().setSize(new Dimension(1280, 720));
-//            driver = new ChromeDriver(dcap);
             AtsdTest.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
             AtsdTest.driver.navigate().to(AtsdTest.url);
         }
@@ -66,4 +68,5 @@ public class ActionOnTestState extends TestWatcher {
             System.out.println("Can't save screenshot to '" + filepath + "'");
         }
     }
+
 }
