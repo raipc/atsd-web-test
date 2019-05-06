@@ -14,7 +14,7 @@ public class MetricsSeriesTablePage {
     }
 
     public boolean isSeriesPresent() {
-        return driver.findElement(metricList).findElements(By.cssSelector("tbody > tr")).size() > 0;
+        return !driver.findElement(metricList).findElements(By.cssSelector("tbody > tr")).isEmpty();
     }
 
 }

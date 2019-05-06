@@ -27,10 +27,14 @@ public class DataEntryCommandsTest extends AtsdTest {
     @Test
     public void testMessageAdd() {
         String messageText = "\"Message text\"";
-        String[] tagNames = {"type", "source", "message_tag_name"};
-        String[] tagValues = {"message_tag_type_value", "message_tag_source_value", "message_tag_tag_value"};
-        String insertMessage = String.format("message e:%s t:%s=%s t:%s=%s t:%s=%s m:%s", ENTITY_NAME,
-                tagNames[0], tagValues[0], tagNames[1], tagValues[1], tagNames[2], tagValues[2], messageText);
+        String type = "message_tag_type_value";
+        String source = "message_tag_source_value";
+        String severity = "FATAL";
+        String severityNumber = "7";
+        String[] tagNames = {"message_tag_name"};
+        String[] tagValues = {"message_tag_tag_value"};
+        String insertMessage = String.format("message e:%s t:type=%s t:source=%s t:severity=%s t:%s=%s m:%s",
+                ENTITY_NAME, type, source, severityNumber, tagNames[0], tagValues[0], messageText);
 
         dataEntryPage.typeCommands(insertMessage).sendCommands();
 
@@ -40,7 +44,9 @@ public class DataEntryCommandsTest extends AtsdTest {
         assertStringContainsValues("Message tag value is not added into Message Tag Value IDs: ",
                 tagValues, new MessageTagValueIDsPage(driver, url).getValuesInTable());
         assertMessageAddByEntityName();
+        assertMessageParameters(type, source, severity);
     }
+
 
     @Test
     public void testPropertyAdd() {
@@ -159,8 +165,8 @@ public class DataEntryCommandsTest extends AtsdTest {
 
     private void assertMessageAddByEntityName() {
         MessagesPage messagesPage = new MessagesPage(driver, url);
-        messagesPage.setEntity(ENTITY_NAME);
-        messagesPage.search();
+        messagesPage.setEntity(ENTITY_NAME)
+                .search();
         assertTrue("Message is not added into table", messagesPage.getCountOfMessages() > 0);
     }
 
@@ -242,6 +248,26 @@ public class DataEntryCommandsTest extends AtsdTest {
         assertStringContainsValues("There is no such tag name: ", tagNames, entityPage.getTagNames());
         assertStringContainsValues("There is no such tag value: ", tagValues, entityPage.getTagValues());
         assertValueAttributeOfElement("Wrong time zone", timeZone, entityPage.getTimeZone());
+    }
+
+    private void assertMessageParameters(String type, String source, String severity) {
+        MessagesPage messagesPage = new MessagesPage(driver, url);
+        messagesPage.setEntity(ENTITY_NAME).search();
+
+        messagesPage.openFilterPanel()
+                .setType(type)
+                .search();
+        assertTrue("Type tag is not added into message", messagesPage.getCountOfMessages() > 0);
+
+        messagesPage.openFilterPanel()
+                .setSource(source)
+                .search();
+        assertTrue("Source tag is not added into message", messagesPage.getCountOfMessages() > 0);
+
+        messagesPage.openFilterPanel()
+                .setSeverity(severity)
+                .search();
+        assertTrue("Severity tag is not added into message", messagesPage.getCountOfMessages() > 0);
     }
 
 }

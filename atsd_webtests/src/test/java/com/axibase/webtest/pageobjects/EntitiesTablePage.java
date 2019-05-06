@@ -22,7 +22,7 @@ public class EntitiesTablePage implements Table {
     @Override
     public boolean isRecordPresent(String name) {
         String xpathToEntity = String.format("//*[@id='entitiesList']//a[text()='%s']", name);
-        WebDriverWait wait = new WebDriverWait(driver, 3);
+        WebDriverWait wait = new WebDriverWait(driver, 2);
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpathToEntity)));
         } catch (TimeoutException exception) {
