@@ -3,6 +3,7 @@ package com.axibase.webtest.service;
 import org.apache.commons.io.FileUtils;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -60,6 +61,9 @@ public class ActionOnTestState extends TestWatcher {
                 + System.currentTimeMillis()
                 + ".png";
         System.out.println(AtsdTest.driver);
+        int height = AtsdTest.driver.findElement(By.xpath("/html/body")).getSize().getHeight();
+        int width = AtsdTest.driver.findElement(By.xpath("/html/body")).getSize().getWidth();
+        AtsdTest.driver.manage().window().setSize(new Dimension(width, height));
         File scrFile = ((TakesScreenshot) AtsdTest.driver).getScreenshotAs(OutputType.FILE);
         try {
             FileUtils.copyFile(scrFile, new File(filepath), true);
@@ -67,6 +71,7 @@ public class ActionOnTestState extends TestWatcher {
         } catch (IOException ex) {
             System.out.println("Can't save screenshot to '" + filepath + "'");
         }
+        AtsdTest.driver.manage().window().setSize(new Dimension(1280, 720));
     }
 
 }

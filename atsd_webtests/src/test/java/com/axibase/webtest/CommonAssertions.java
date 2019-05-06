@@ -35,10 +35,10 @@ public class CommonAssertions {
      *
      * @param errorMessage  - message that will be shown if element is valid
      * @param expectedValue - expected value
-     * @param -             element that will be checked
+     * @param element       - element that will be checked
      */
     public static void assertValueAttributeOfElement(String errorMessage, String expectedValue, WebElement element) {
-        assertEquals(errorMessage, expectedValue, element.getAttribute("value"));
+        assertEquals(errorMessage, expectedValue.toLowerCase(), element.getAttribute("value").toLowerCase());
     }
 
     /**
@@ -49,6 +49,19 @@ public class CommonAssertions {
      */
     public static void assertPageUrl(String expectedUrl, String currentUrl) {
         assertEquals("Wrong page", expectedUrl, currentUrl);
+    }
+
+    /**
+     * Check that string contains all passed values
+     *
+     * @param errorMessage - message that will be shown if the string doesn't contains a value
+     * @param values       - values that must be a part of full string
+     * @param string       - main string that have to contain all values
+     */
+    public static void assertStringContainsValues(String errorMessage, String[] values, String string) {
+        for (String value : values) {
+            assertTrue(errorMessage + value, string.contains(value));
+        }
     }
 
 }

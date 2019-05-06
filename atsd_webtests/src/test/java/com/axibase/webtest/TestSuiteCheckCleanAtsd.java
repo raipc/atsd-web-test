@@ -3,6 +3,7 @@ package com.axibase.webtest;
 import com.axibase.webtest.cases.CreateEntityAndMetricTest;
 import com.axibase.webtest.cases.CreatePortalTest;
 import com.axibase.webtest.cases.CreateUserGroupTest;
+import com.axibase.webtest.cases.DataEntryCommandsTest;
 import com.axibase.webtest.forecasts.ForecastPageTestDependingOnTheData;
 import com.axibase.webtest.forecasts.ForecastPageTestRegardlessOfData;
 import com.axibase.webtest.service.*;
@@ -28,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
         CreateUserGroupTest.class,
         CSVImportParserAsSeriesTest.class,
         ForecastPageTestDependingOnTheData.class,
-        ForecastPageTestRegardlessOfData.class
+        ForecastPageTestRegardlessOfData.class,
+        DataEntryCommandsTest.class
 })
 public class TestSuiteCheckCleanAtsd {
     @BeforeClass
