@@ -52,17 +52,35 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>${checkCleanAtsdSuite}</include>
-                    </includes>
-                </configuration>
-                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <!-- Default task is executed first. Order in executions list does not matter. -->
+                        <configuration>
+                            <includes>
+                                <include>**/AccountServiceTest.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>after-account-creation</id>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*AccountServiceTest.java</exclude>
+                                <exclude>**/*AdminBackupImportTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <version>2.22.2</version>
             </plugin>
         </plugins>
     </build>
     <properties>
-        <checkCleanAtsdSuite>**/TestSuiteCheckCleanAtsd.class</checkCleanAtsdSuite>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
