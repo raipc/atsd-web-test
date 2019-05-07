@@ -22,7 +22,7 @@ public class PropertiesTablePage {
                 .findElements(By.cssSelector("tbody > tr >td:nth-child(3n)"))
                 .stream()
                 .map(WebElement::getText)
-                .collect(Collectors.toList()).toString().contains(propertyName);
+                .collect(Collectors.joining(",")).contains(propertyName);
     }
 
 }

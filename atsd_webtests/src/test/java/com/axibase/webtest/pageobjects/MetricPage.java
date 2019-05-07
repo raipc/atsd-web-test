@@ -109,13 +109,13 @@ public class MetricPage {
     public String getTagNames() {
         return driver.findElements(tagNames).stream().
                 map(element -> element.getAttribute("value")).
-                collect(Collectors.toList()).toString();
+                collect(Collectors.joining(","));
     }
 
     public String getTagValues() {
         return driver.findElements(tagValues).stream().
                 map(element -> element.getAttribute("value")).
-                collect(Collectors.toList()).toString();
+                collect(Collectors.joining(","));
     }
 
     public WebElement getEnabledSwitch() {
