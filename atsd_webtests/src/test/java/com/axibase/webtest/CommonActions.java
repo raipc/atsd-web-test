@@ -1,5 +1,8 @@
 package com.axibase.webtest;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -7,6 +10,11 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CommonActions {
 
@@ -18,7 +26,7 @@ public class CommonActions {
      */
     public static void sendTextToCodeMirror(WebElement relatedTextArea, String text) {
         if (!relatedTextArea.getTagName().equals("textarea")) {
-            throw new IllegalStateException("his is not a textarea");
+            throw new IllegalStateException("This is not a textarea");
         }
         WebDriver driver = ElementUtils.getConnectedDriver(relatedTextArea);
         Actions builder = new Actions(driver);
@@ -71,6 +79,62 @@ public class CommonActions {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.id("confirm-modal")));
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='confirm-modal']//button[text()='Yes']")));
         driver.findElement(By.xpath("//*[@id='confirm-modal']//button[text()='Yes']")).click();
+    }
+
+    /**
+     * Create URL with params from string
+     *
+     * @param URLPrefix - string before params
+     * @param params    - string params
+     * @return - new URL from prefix and params
+     */
+    public static String createNewURL(String URLPrefix, Map<String, String> params) {
+        List<NameValuePair> paramsForEncoding = new ArrayList<>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            paramsForEncoding.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+        }
+        try {
+            return new URIBuilder(URLPrefix).addParameters(paramsForEncoding).build().toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Wrong URL", e);
+        }
+    }
+
+    /**
+     * Create URL without params from string
+     *
+     * @param URLPrefix - string that will be used to create URL
+     * @return - new URL from prefix
+     */
+    public static String createNewURL(String URLPrefix) {
+        try {
+            return new URIBuilder(URLPrefix).build().toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Wrong URL", e);
+        }
+    }
+
+    /**
+     * Create URL with params from string
+     *
+     * @param URLPrefix   - string before params
+     * @param paramKeys   - string representation of key parameters
+     * @param paramValues - string representation of value parameters
+     * @return - new URL from prefix and params
+     */
+    public static String createNewURL(String URLPrefix, String[] paramKeys, String[] paramValues) {
+        if (paramKeys.length != paramValues.length) {
+            throw new IllegalStateException("Length of parameter arrays should be equal");
+        }
+        List<NameValuePair> paramsForEncoding = new ArrayList<>();
+        for (int i = 0; i < paramKeys.length; i++) {
+            paramsForEncoding.add(new BasicNameValuePair(paramKeys[i], paramValues[i]));
+        }
+        try {
+            return new URIBuilder(URLPrefix).addParameters(paramsForEncoding).build().toString();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Wrong URL", e);
+        }
     }
 
 }

@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class EntitiesTablePage implements Table {
     private final String BASE_URL = "/entities";
     private WebDriver driver;
@@ -16,13 +18,13 @@ public class EntitiesTablePage implements Table {
 
     public EntitiesTablePage(WebDriver driver, String url) {
         this.driver = driver;
-        driver.get(url + BASE_URL);
+        driver.get(createNewURL(url + BASE_URL));
     }
 
     @Override
     public boolean isRecordPresent(String name) {
         String xpathToEntity = String.format("//*[@id='entitiesList']//a[text()='%s']", name);
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, 1);
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpathToEntity)));
         } catch (TimeoutException exception) {

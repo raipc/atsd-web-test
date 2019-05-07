@@ -1,11 +1,15 @@
 package com.axibase.webtest.cases;
 
+import com.axibase.webtest.ElementUtils;
 import com.axibase.webtest.pageobjects.*;
 import com.axibase.webtest.service.AtsdTest;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static com.axibase.webtest.CommonActions.clickCheckboxByValueAttribute;
 import static com.axibase.webtest.CommonActions.dropCheckedRecords;
@@ -31,10 +35,10 @@ public class DataEntryCommandsTest extends AtsdTest {
         String source = "message_tag_source_value";
         String severity = "FATAL";
         String severityNumber = "7";
-        String[] tagNames = {"message_tag_name"};
-        String[] tagValues = {"message_tag_tag_value"};
-        String insertMessage = String.format("message e:%s t:type=%s t:source=%s t:severity=%s t:%s=%s m:%s",
-                ENTITY_NAME, type, source, severityNumber, tagNames[0], tagValues[0], messageText);
+        String[] tagNames = {"message_tag_name1", "message_tag_name2"};
+        String[] tagValues = {"message_tag_tag_value1", "message_tag_tag_value2"};
+        String insertMessage = String.format("message e:%s t:type=%s t:source=%s t:severity=%s t:%s=%s t:%s=%s m:%s",
+                ENTITY_NAME, type, source, severityNumber, tagNames[0], tagValues[0], tagNames[1], tagValues[1], messageText);
 
         dataEntryPage.typeCommands(insertMessage).sendCommands();
 
@@ -72,13 +76,15 @@ public class DataEntryCommandsTest extends AtsdTest {
         String metricText2 = "metric_text2";
         String textAppend = "true";
         String metricValue = "10";
-        String[] tagNames = {"series_tag_key"};
-        String[] tagValues = {"series_tag_value"};
+        String[] tagNames = {"series_tag_key1", "series_tag_key2"};
+        String[] tagValues = {"series_tag_value1", "series_tag_value2"};
         String time = "1425482080";
-        String insertMessage1 = String.format("series e:%s m:%s=%s0 x:%s=%s a:%s t:%s=%s s:%s", ENTITY_NAME,
-                METRIC_NAME, metricValue, METRIC_NAME, metricText1, textAppend, tagNames[0], tagValues[0], time);
-        String insertMessage2 = String.format("series e:%s m:%s=%s0 x:%s=%s a:%s t:%s=%s s:%S", ENTITY_NAME,
-                METRIC_NAME, metricValue, METRIC_NAME, metricText2, textAppend, tagNames[0], tagValues[0], time);
+        String insertMessage1 = String.format("series e:%s m:%s=%s0 x:%s=%s a:%s t:%s=%s t:%s=%s s:%s", ENTITY_NAME,
+                METRIC_NAME, metricValue, METRIC_NAME, metricText1, textAppend, tagNames[0], tagValues[0],
+                tagNames[1], tagValues[1], time);
+        String insertMessage2 = String.format("series e:%s m:%s=%s0 x:%s=%s a:%s t:%s=%s t:%s=%s s:%S", ENTITY_NAME,
+                METRIC_NAME, metricValue, METRIC_NAME, metricText2, textAppend, tagNames[0], tagValues[0]
+                , tagNames[1], tagValues[1], time);
 
         dataEntryPage.typeCommands(insertMessage1 + "\n" + insertMessage2).sendCommands();
 
@@ -96,8 +102,8 @@ public class DataEntryCommandsTest extends AtsdTest {
         String status = "false";
         String label = "label_metric";
         String description = "descr_metric";
-        String dataType = "Long";
-        String interpolationMode = "Previous";
+        String dataType = "LONG";
+        String interpolationMode = "PREVIOUS";
         String units = "Celsius";
         String filterExpression = "value>0";
         String timeZone = "CET";
@@ -107,12 +113,12 @@ public class DataEntryCommandsTest extends AtsdTest {
         String retentionIntervalDays = "20";
         String minVal = "10";
         String maxVal = "100";
-        String[] tagNames = {"metric_tag_name1"};
-        String[] tagValues = {"metric_tag_value1"};
+        String[] tagNames = {"metric_tag_name1", "metric_tag_name2"};
+        String[] tagValues = {"metric_tag_value1", "metric_tag_value2"};
         String insertMessage = String.format("metric m:%s b:%s l:%s d:%s p:%s i:%s u:%s f:%s z:%s v:%s a:%s pe:%s " +
-                        "rd:%s min:%s max:%s t:%s=%s", METRIC_NAME, status, label, description, dataType,
+                        "rd:%s min:%s max:%s t:%s=%s t:%s=%s", METRIC_NAME, status, label, description, dataType,
                 interpolationMode, units, filterExpression, timeZone, versioning, invalidAction, persistent,
-                retentionIntervalDays, minVal, maxVal, tagNames[0], tagValues[0]);
+                retentionIntervalDays, minVal, maxVal, tagNames[0], tagValues[0], tagNames[1], tagValues[1]);
 
         dataEntryPage.typeCommands(insertMessage).sendCommands();
 
@@ -127,11 +133,11 @@ public class DataEntryCommandsTest extends AtsdTest {
         String status = "true";
         String label = "label_entity";
         String timeZone = "CET";
-        String interpolationMode = "Previous";
-        String[] tagNames = {"entity_tag_name1"};
-        String[] tagValues = {"entity_tag_value1"};
-        String insertMessage = String.format("entity e:%s b:%s l:%s i:%s z:%s t:%s=%s",
-                ENTITY_NAME, status, label, interpolationMode, timeZone, tagNames[0], tagValues[0]);
+        String interpolationMode = "PREVIOUS";
+        String[] tagNames = {"entity_tag_name1", "entity_tag_name2"};
+        String[] tagValues = {"entity_tag_value1", "entity_tag_value2"};
+        String insertMessage = String.format("entity e:%s b:%s l:%s i:%s z:%s t:%s=%s t:%s=%s", ENTITY_NAME, status, label,
+                interpolationMode, timeZone, tagNames[0], tagValues[0], tagNames[1], tagValues[1]);
 
         dataEntryPage.typeCommands(insertMessage).sendCommands();
 
@@ -177,7 +183,7 @@ public class DataEntryCommandsTest extends AtsdTest {
 
     private void assertPropertiesKeysAndTags(String propType, String[] key_names, String[] key_values,
                                              String[] tag_names, String[] tag_values) {
-        PropertiesPage propertiesPage = new PropertiesPage(driver, url, ENTITY_NAME, propType);
+        PropertiesPage propertiesPage = new PropertiesPage(driver, url, ENTITY_NAME, new String[]{"type"}, new String[]{propType});
         String[] keys = ArrayUtils.addAll(key_names, key_values);
         String[] tags = ArrayUtils.addAll(tag_names, tag_values);
         String allTagsAdnKeys = propertiesPage.getTagsAndKeys();
@@ -191,7 +197,9 @@ public class DataEntryCommandsTest extends AtsdTest {
     }
 
     private void assertSeriesParams(String metricText, String[] tagNames, String[] tagValues) {
-        StatisticsPage statisticsPage = new StatisticsPage(driver, url, ENTITY_NAME, METRIC_NAME, tagNames, tagValues);
+        StatisticsPage statisticsPage = new StatisticsPage(driver, url,
+                Stream.concat(Stream.of("entity", "metric"), Arrays.stream(tagNames)).toArray(String[]::new),
+                Stream.concat(Stream.of(ENTITY_NAME, METRIC_NAME), Arrays.stream(tagValues)).toArray(String[]::new));
         String allTags = statisticsPage.getSeriesTags();
         assertStringContainsValues("There is no such tag name:", tagNames, allTags);
         assertStringContainsValues("There is no such tag value:", tagValues, allTags);
@@ -213,11 +221,11 @@ public class DataEntryCommandsTest extends AtsdTest {
                                    String interpolationMode, String units, String filter, String timeZone,
                                    String versioning, String invalidAction, String persistent, String retentionIntervalDays,
                                    String minVal, String maxVal, String[] tagNames, String[] tagValues) {
-        MetricPage metricPage = new MetricPage(driver, url, METRIC_NAME);
+        MetricPage metricPage = new MetricPage(driver, url, new String[]{"metricName"}, new String[]{METRIC_NAME});
 
-        assertSwitchOnOffButton("Wrong persistent", persistent, metricPage.getPersistentSwitch());
-        assertSwitchOnOffButton("Wrong status", status, metricPage.getEnabledSwitch());
-        assertSwitchOnOffButton("Wrong versioning", versioning, metricPage.getVersioningSwitch());
+        assertSwitchElement("Wrong persistent", persistent, metricPage.getPersistentSwitch());
+        assertSwitchElement("Wrong status", status, metricPage.getEnabledSwitch());
+        assertSwitchElement("Wrong versioning", versioning, metricPage.getVersioningSwitch());
         assertValueAttributeOfElement("Wrong label", label, metricPage.getLabel());
         assertValueAttributeOfElement("Wrong interpolation", interpolationMode, metricPage.getInterpolation());
         assertStringContainsValues("There is no such tag name: ", tagNames, metricPage.getTagNames());
@@ -233,16 +241,16 @@ public class DataEntryCommandsTest extends AtsdTest {
         assertValueAttributeOfElement("Wrong time zone", timeZone, metricPage.getTimeZone());
     }
 
-    private void assertSwitchOnOffButton(String errorMessage, String valueOfButton, WebElement switchButton) {
-        assertEquals(errorMessage, valueOfButton.toLowerCase().equals("true") ? "Yes" : "No",
-                switchButton.getAttribute("class").contains("btn-warning") ? "Yes" : "No");
+    private void assertSwitchElement(String errorMessage, String expectedValue, WebElement switchButton) {
+        String script = "return element.checked";
+        assertEquals(errorMessage, Boolean.parseBoolean(expectedValue), ElementUtils.executeWithElement(switchButton, script));
     }
 
     private void assertEntityParams(String status, String label, String interpolationMode,
                                     String timeZone, String[] tagNames, String[] tagValues) {
         EntityPage entityPage = new EntityPage(driver, url, ENTITY_NAME);
 
-        assertSwitchOnOffButton("Wrong status", status, entityPage.getEnabledSwitch());
+        assertSwitchElement("Wrong status", status, entityPage.getEnabledSwitch());
         assertValueAttributeOfElement("Wrong label", label, entityPage.getLabel());
         assertValueAttributeOfElement("Wrong interpolation", interpolationMode, entityPage.getInterpolation());
         assertStringContainsValues("There is no such tag name: ", tagNames, entityPage.getTagNames());
@@ -264,10 +272,8 @@ public class DataEntryCommandsTest extends AtsdTest {
                 .search();
         assertTrue("Source tag is not added into message", messagesPage.getCountOfMessages() > 0);
 
-        messagesPage.openFilterPanel()
-                .setSeverity(severity)
-                .search();
-        assertTrue("Severity tag is not added into message", messagesPage.getCountOfMessages() > 0);
+        String[] messagesSeverity = messagesPage.getMessagesSeverity();
+        assertEquals("Wrong severity", severity, messagesSeverity[0]);
     }
 
 }

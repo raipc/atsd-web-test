@@ -8,8 +8,10 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class MetricPage {
-    private final String BASE_URL = "/metrics/metric.xhtml?metricName=";
+    private final String BASE_URL = "/metrics/metric.xhtml";
     private WebDriver driver;
 
     private By name = By.id("metric.name");
@@ -22,20 +24,20 @@ public class MetricPage {
     private By tagValues = By.className("tag-value");
     private By addTag = By.className("add-tag-button");
 
-    private By enabledSwitch = By.xpath("//*[@id='metric.enabled']/parent::div");
-    private By persistentSwitch = By.xpath("//*[@id='metric.persistent']/parent::div");
+    private By enabledSwitch = By.id("metric.enabled");
+    private By persistentSwitch = By.id("metric.persistent");
     private By persistentFilter = By.id("metric.filter");
     private By retentionIntervalDays = By.id("metric.retentionIntervalDays");
     private By seriesRetentionDays = By.id("metric.seriesRetentionDays");
     private By dataType = By.id("metric.dataType");
     private By timeZone = By.id("metric.timeZone");
-    private By versioningSwitch = By.xpath("//*[@id='metric.versioning']/parent::div");
+    private By versioningSwitch = By.id("metric.versioning");
     private By invalidAction = By.id("metric.invalidValueAction");
     private By interpolation = By.id("metric.interpolate");
 
-    public MetricPage(WebDriver driver, String url, String metricName) {
+    public MetricPage(WebDriver driver, String url, String[] paramKeys, String[] paramValues) {
         this.driver = driver;
-        driver.get(url + BASE_URL + metricName);
+        driver.get(createNewURL(url + BASE_URL, paramKeys, paramValues));
     }
 
     public MetricPage openSettingsPanel() {

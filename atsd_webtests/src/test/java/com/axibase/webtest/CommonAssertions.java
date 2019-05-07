@@ -38,7 +38,7 @@ public class CommonAssertions {
      * @param element       - element that will be checked
      */
     public static void assertValueAttributeOfElement(String errorMessage, String expectedValue, WebElement element) {
-        assertEquals(errorMessage, expectedValue.toLowerCase(), element.getAttribute("value").toLowerCase());
+        assertEquals(errorMessage, expectedValue, element.getAttribute("value"));
     }
 
     /**

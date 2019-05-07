@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class MetricsTablePage implements Table {
     private final String BASE_URL = "/metrics";
     private WebDriver driver;
@@ -13,7 +15,7 @@ public class MetricsTablePage implements Table {
 
     public MetricsTablePage(WebDriver driver, String url) {
         this.driver = driver;
-        driver.get(url + BASE_URL);
+        driver.get(createNewURL(url + BASE_URL));
     }
 
     @Override

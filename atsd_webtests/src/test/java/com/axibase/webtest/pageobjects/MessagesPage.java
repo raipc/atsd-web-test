@@ -4,6 +4,10 @@ import com.axibase.webtest.CommonActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import java.util.stream.Collectors;
+
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class MessagesPage {
     private static final String BASE_URL = "/messages";
     private WebDriver driver;
@@ -19,15 +23,15 @@ public class MessagesPage {
 
     public MessagesPage(WebDriver driver, String url) {
         this.driver = driver;
-        driver.get(url + BASE_URL);
+        driver.get(createNewURL(url + BASE_URL));
     }
 
     public void search() {
         driver.findElement(search).click();
     }
 
-    public MessagesPage openFilterPanel(){
-        if(driver.findElement(tableHeader).getAttribute("class").contains("collapsed")){
+    public MessagesPage openFilterPanel() {
+        if (driver.findElement(tableHeader).getAttribute("class").contains("collapsed")) {
             driver.findElement(tableHeader).click();
         }
         return this;
@@ -40,6 +44,13 @@ public class MessagesPage {
     public MessagesPage setEntity(String name) {
         CommonActions.setValueOption(name, driver.findElement(entity));
         return this;
+    }
+
+    public String[] getMessagesSeverity() {
+        return driver.findElements(By.xpath("//td[contains(@id,'severity')]"))
+                .stream()
+                .map(element->element.getAttribute("data-value"))
+                .toArray(String[]::new);
     }
 
     public MessagesPage setSeverity(String value) {

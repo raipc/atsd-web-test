@@ -1,5 +1,6 @@
 package com.axibase.webtest.forecasts;
 
+import com.axibase.webtest.CommonActions;
 import com.axibase.webtest.CommonAssertions;
 import com.axibase.webtest.pages.ForecastSettingsPage;
 import com.axibase.webtest.pages.ForecastViewerPage;
@@ -169,7 +170,7 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
     @Test
     public void testForecastURLParams() {
         Map<String, String> params = prepareURLParams();
-        String newURL = createNewURL(AtsdTest.url + "/series/forecast", params);
+        String newURL = CommonActions.createNewURL(AtsdTest.url + "/series/forecast", params);
         driver.navigate().to(newURL);
 
         assertRegularizeOptionValues(params.get("aggregation"), params.get("interpolation"), "25",
@@ -361,18 +362,6 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
         String newDate = forecastViewerPage.getStartDate().getAttribute("value") + "T" +
                 forecastViewerPage.getStartTime().getAttribute("value");
         assertEquals(errorMessage, getTranslatedDate(sendedDate).toString(), newDate);
-    }
-
-    private String createNewURL(String URLPrefix, Map<String, String> params) {
-        List<NameValuePair> paramsForEncoding = new ArrayList<>();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            paramsForEncoding.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-        }
-        try {
-            return new URIBuilder(URLPrefix).addParameters(paramsForEncoding).build().toString();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Wrong URI", e);
-        }
     }
 
     private String removeURLParameter(String url, String parameterName) {

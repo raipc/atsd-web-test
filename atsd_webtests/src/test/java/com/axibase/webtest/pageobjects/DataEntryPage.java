@@ -1,8 +1,10 @@
 package com.axibase.webtest.pageobjects;
 
-import com.axibase.webtest.CommonActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+
+import static com.axibase.webtest.CommonActions.createNewURL;
+import static com.axibase.webtest.CommonActions.sendTextToCodeMirror;
 
 public class DataEntryPage {
     private final String BASE_URL = "/metrics/entry";
@@ -12,11 +14,11 @@ public class DataEntryPage {
 
     public DataEntryPage(WebDriver driver, String url) {
         this.driver = driver;
-        driver.get(url + BASE_URL);
+        driver.get(createNewURL(url + BASE_URL));
     }
 
     public DataEntryPage typeCommands(String command) {
-        CommonActions.sendTextToCodeMirror(driver.findElement(By.name("commands")), command);
+        sendTextToCodeMirror(driver.findElement(By.name("commands")), command);
         return this;
     }
 

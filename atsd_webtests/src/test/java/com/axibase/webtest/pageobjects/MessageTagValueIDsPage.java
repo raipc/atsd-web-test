@@ -6,13 +6,15 @@ import org.openqa.selenium.WebElement;
 
 import java.util.stream.Collectors;
 
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class MessageTagValueIDsPage implements IDsPage {
     private static final String BASE_URL = "/admin/tags/message_tag_value/uids";
     private WebDriver driver;
 
     public MessageTagValueIDsPage(WebDriver driver, String url) {
         this.driver = driver;
-        driver.get(url + BASE_URL);
+        driver.get(createNewURL(url + BASE_URL));
     }
 
     @Override

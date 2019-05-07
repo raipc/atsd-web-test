@@ -6,13 +6,15 @@ import org.openqa.selenium.WebElement;
 
 import java.util.stream.Collectors;
 
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class PropertiesTablePage {
     private final String BASE_URL = "/properties";
     private WebDriver driver;
 
     public PropertiesTablePage(WebDriver driver, String url, String entityName) {
         this.driver = driver;
-        driver.get(url + "/entities/" + entityName + BASE_URL);
+        driver.get(createNewURL(url + "/entities/" + entityName + BASE_URL));
     }
 
     public boolean isPropertyPresent(String propertyName) {

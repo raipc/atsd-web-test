@@ -8,6 +8,8 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.axibase.webtest.CommonActions.createNewURL;
+
 public class EntityPage {
     private final String BASE_URL = "/entities/";
     private WebDriver driver;
@@ -18,13 +20,13 @@ public class EntityPage {
     private By tagValues = By.className("tag-value");
     private By addTag = By.className("add-tag-button");
 
-    private By enabledSwitch = By.xpath("//*[@id='enabled']/parent::div");
+    private By enabledSwitch = By.id("enabled");
     private By interpolation = By.id("interpolate");
     private By timeZone = By.id("timeZone");
 
     public EntityPage(WebDriver driver, String url, String entityName) {
         this.driver = driver;
-        driver.get(url + BASE_URL + entityName);
+        driver.get(createNewURL(url + BASE_URL + entityName));
     }
 
     public EntityPage openSettingsPanel() {
