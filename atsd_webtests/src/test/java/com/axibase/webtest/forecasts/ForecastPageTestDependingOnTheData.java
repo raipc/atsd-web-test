@@ -4,6 +4,7 @@ import com.axibase.webtest.CommonAssertions;
 import com.axibase.webtest.pages.ForecastSettingsPage;
 import com.axibase.webtest.pages.ForecastViewerPage;
 import com.axibase.webtest.pages.PortalPage;
+import com.axibase.webtest.service.Config;
 import com.axibase.webtest.service.AtsdTest;
 import com.axibase.webtest.service.CSVDataUploaderService;
 import com.axibase.webtest.CommonSelects;
@@ -427,7 +428,8 @@ public class ForecastPageTestDependingOnTheData extends AtsdTest {
         String url = AtsdTest.url + "/api/v1/version";
         HttpClient client = HttpClientBuilder.create().build();
         HttpGet request = new HttpGet(url);
-        String authorizationParams = AtsdTest.login + ":" + AtsdTest.password;
+        Config config = Config.getInstance();
+        String authorizationParams = config.getLogin() + ":" + config.getPassword();
         try {
             request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + new String(Base64.encodeBase64(
                     authorizationParams.getBytes(StandardCharsets.ISO_8859_1))));

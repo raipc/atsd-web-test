@@ -2,6 +2,7 @@ package com.axibase.webtest.service.csv;
 
 import com.axibase.webtest.CommonAssertions;
 import com.axibase.webtest.service.AtsdTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -11,7 +12,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CSVImportParserAsSeriesTest extends AtsdTest {
     private static final String PARSER_NAME = "test-atsd-import-series-parser";
@@ -21,6 +23,17 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
     public void setUp() {
         login();
         goToCSVParsersImportPage();
+    }
+
+    @After
+    public void cleanup() {
+        goToCSVParsersPage();
+        setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select all']")), true);
+        driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
+        driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
+        WebDriverWait wait = new WebDriverWait(driver, 1);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")));
+        driver.findElement(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")).click();
     }
 
     @Test
@@ -48,17 +61,6 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
         goToCSVParsersPage();
         assertTrue("Parser is not added into table",
                 driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
-    }
-
-    @Override
-    public void cleanup() {
-        goToCSVParsersPage();
-        setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select all']")), true);
-        driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
-        driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
-        WebDriverWait wait = new WebDriverWait(driver, 1);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")));
-        driver.findElement(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")).click();
     }
 
     private void sendParserIntoTableWithoutReplacement(String file) {

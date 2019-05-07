@@ -24,6 +24,11 @@ public class LoginService extends Service {
         }
     }
 
+    public boolean loginAsAdmin() {
+        final Config config = Config.getInstance();
+        return login(config.getLogin(), config.getPassword());
+    }
+
     public boolean login(String login, String password) {
         String field_atsd_user = "//*[@id='atsd_user']";
         String field_atsd_pwd = "//*[@id='atsd_pwd']";

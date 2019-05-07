@@ -4,13 +4,13 @@ package com.axibase.webtest.service;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class EntitiesServiceTest extends AtsdTest{
+public class EntitiesServiceTest extends AtsdTest {
 
     @Test
     public void checkDefaultEntity() {
         Assert.assertEquals(generateAssertMessage("Should get login page"), driver.getTitle(), LoginService.title);
         LoginService ls = new LoginService(driver);
-        Assert.assertTrue(generateAssertMessage("Can't login"), ls.login(login, password));
+        Assert.assertTrue(generateAssertMessage("Can't login"), ls.loginAsAdmin());
         driver.navigate().to(url + "/admin/system-information");
         Assert.assertEquals(generateAssertMessage("Should get system-information page"), driver.getTitle(), SystemInfoService.title);
         SystemInfoService sis = new SystemInfoService(driver);

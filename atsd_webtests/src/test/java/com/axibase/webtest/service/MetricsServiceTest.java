@@ -16,7 +16,7 @@ public class MetricsServiceTest extends AtsdTest {
         String uri = "/metrics?page=1&size=1000&filter=all&mask=&tag-name=&tag-value=";
         assertEquals(generateAssertMessage("Should get login page"), LoginService.title, driver.getTitle());
         LoginService ls = new LoginService(driver);
-        ls.login(login, password);
+        ls.loginAsAdmin();
         driver.navigate().to(url + uri);
         assertEquals(generateAssertMessage("Title should be 'Metrics'"), MetricsService.title, driver.getTitle());
         MetricsService ms = new MetricsService(driver);

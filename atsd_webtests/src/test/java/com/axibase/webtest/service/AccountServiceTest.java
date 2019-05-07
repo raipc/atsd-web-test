@@ -1,12 +1,13 @@
 package com.axibase.webtest.service;
 
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static com.axibase.webtest.service.AccountService.CREATE_ACCOUNT_TITLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,13 +24,13 @@ public class AccountServiceTest extends AtsdTest {
     }
 
     @Test
-    public void createUser() {
+    public void createAdminUser() {
         try {
             if (!driver.getTitle().equals("Login")) {
                 System.out.println("Trying to create admin...");
-                assertEquals(generateAssertMessage("Should get page with title 'Create Account'"), AtsdTest.driver.getTitle(), "Create Account");
-                assertTrue(generateAssertMessage("Can't create account"), as.createUser(AtsdTest.login, AtsdTest.password));
-                URL url = new URL(AtsdTest.driver.getCurrentUrl());
+                assertEquals(generateAssertMessage("Should get page with title '" + CREATE_ACCOUNT_TITLE + "'"), CREATE_ACCOUNT_TITLE, AtsdTest.driver.getTitle());
+                assertTrue(generateAssertMessage("Can't create account"), as.createAdmin());
+                URL url = new URL(driver.getCurrentUrl());
                 assertEquals(generateAssertMessage("Should get redirect on home page"), "/", url.getPath());
             } else {
                 System.out.println("User already created");
@@ -41,16 +42,15 @@ public class AccountServiceTest extends AtsdTest {
 
     @Test
     public void deleteUser() {
-
         if (!driver.getTitle().equals("Login")) {
             System.out.println("Trying to create admin...");
-            as.createUser(AtsdTest.login, AtsdTest.password);
+            as.createAdmin();
         } else {
             login();
         }
         driver.navigate().to(AtsdTest.url + "/admin/users/edit.xhtml");
         assertEquals(generateAssertMessage("Should get page with title 'New User'"), "New User", AtsdTest.driver.getTitle());
-        String testUser = "axiuser";
+        String testUser = "axiuser-" + System.currentTimeMillis();
         assertTrue(generateAssertMessage("Can't create account"), as.createUser(testUser, testUser));
         assertEquals(generateAssertMessage("Should get page with title 'User " + testUser + "'"), "User " + testUser, AtsdTest.driver.getTitle());
         assertTrue(generateAssertMessage("Can't delete account '" + testUser + "'"), as.deleteUser(testUser));

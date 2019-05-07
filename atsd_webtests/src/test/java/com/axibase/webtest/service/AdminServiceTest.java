@@ -30,7 +30,7 @@ public class AdminServiceTest extends AtsdTest {
     private long getAtsdTime() {
         assertEquals(generateAssertMessage("Should get login page"), LoginService.title, driver.getTitle());
         LoginService loginService = new LoginService(driver);
-        loginService.login(login, password);
+        loginService.loginAsAdmin();
         driver.navigate().to(url + "/admin/system-information");
         assertEquals("title should be System Information", "System Information", driver.getTitle());
         AdminService adminService = new AdminService(driver);

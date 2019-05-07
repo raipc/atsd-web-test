@@ -3,6 +3,7 @@ package com.axibase.webtest.forecasts;
 import com.axibase.webtest.CommonActions;
 import com.axibase.webtest.CommonAssertions;
 import com.axibase.webtest.pages.ForecastViewerPage;
+import com.axibase.webtest.service.Config;
 import com.axibase.webtest.service.AtsdTest;
 import com.axibase.webtest.CommonSelects;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class ForecastPageTestRegardlessOfData extends AtsdTest {
     }
 
     private void loadData() {
-        driver.get(AtsdTest.url + "/metrics/entry");
+        driver.get(Config.getInstance().getUrl() + "/metrics/entry");
         CommonActions.sendTextToCodeMirror(driver.findElement(By.name("commands")), "<#list 1..5 as i>\n" +
                 "series s:${1425482080 - i * 600} " +
                 "e:entity-for-regardless-of-data-test " +

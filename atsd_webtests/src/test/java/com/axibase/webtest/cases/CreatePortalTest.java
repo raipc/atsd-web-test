@@ -1,8 +1,6 @@
 package com.axibase.webtest.cases;
 
 import com.axibase.webtest.service.AtsdTest;
-import com.axibase.webtest.service.LoginService;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;

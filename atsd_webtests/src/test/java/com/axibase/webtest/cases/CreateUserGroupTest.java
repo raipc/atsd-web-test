@@ -19,7 +19,7 @@ public class CreateUserGroupTest extends AtsdTest {
     public void createTestUser() {
         login();
         driver.navigate().to(url + "/admin/users/edit.xhtml");
-        as = new AccountService(AtsdTest.driver);
+        as = new AccountService(driver);
         as.createUser(testUser, testUser);
     }
 
