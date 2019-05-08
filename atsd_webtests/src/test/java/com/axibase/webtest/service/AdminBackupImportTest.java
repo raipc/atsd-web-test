@@ -1,20 +1,25 @@
 package com.axibase.webtest.service;
 
+import com.axibase.webtest.CommonAssertions;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static com.axibase.webtest.CommonConditions.clickable;
+import static com.axibase.webtest.PageUtils.urlPath;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.executeJavaScript;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+
+@Ignore("Enable after fix")
 @RunWith(value = Parameterized.class)
 public class AdminBackupImportTest extends AtsdTest {
 
@@ -44,7 +49,7 @@ public class AdminBackupImportTest extends AtsdTest {
 
     @Before
     public void setUp() {
-        login();
+        super.setUp();
         goToAdminImportBackupPage();
     }
 
@@ -57,7 +62,7 @@ public class AdminBackupImportTest extends AtsdTest {
         goToReplacementTablesPage();
 
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable"))));
+                checkTable($(By.id("overviewTable"))));
     }
 
     @Test
@@ -73,7 +78,7 @@ public class AdminBackupImportTest extends AtsdTest {
         goToReplacementTablesPage();
 
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable"))));
+                checkTable($(By.id("overviewTable"))));
     }
 
     @Test
@@ -85,7 +90,7 @@ public class AdminBackupImportTest extends AtsdTest {
         goToReplacementTablesPage();
 
         Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable"))));
+                checkTable($(By.id("overviewTable"))));
     }
 
     @After
@@ -94,9 +99,9 @@ public class AdminBackupImportTest extends AtsdTest {
     }
 
     private void sendFilesOnAdminImportBackup(String file) {
-        WebElement putTable = driver.findElement(By.id("putTable"));
+        WebElement putTable = $(By.id("putTable"));
         WebElement inputFile = putTable.findElement(By.xpath(".//input[@type='file']"));
-        WebElement submitButton = driver.findElement(By.xpath(".//input[@type='submit']"));
+        WebElement submitButton = $(By.xpath(".//input[@type='submit']"));
 
         removeMultipleTag(inputFile);
         inputFile.sendKeys(file);
@@ -106,43 +111,40 @@ public class AdminBackupImportTest extends AtsdTest {
     // This function was created in need to avoid PhantomJS  multiple input bug
     // Function perform javascript on page to remove 'multiple' attribute from input element
     private void removeMultipleTag(WebElement inputFile) {
-        ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('multiple')", inputFile);
+        executeJavaScript("arguments[0].removeAttribute('multiple')", inputFile);
     }
 
     private void setReplaceExisting(boolean on) {
-        setCheckbox(driver.findElement(By.id("replaceExisting")), on);
+        $(By.id("replaceExisting")).setSelected(on);
     }
 
     private void setAutoEnable(boolean on) {
-        setCheckbox(driver.findElement(By.id("autoEnable")), on);
+        setCheckbox($(By.id("autoEnable")), on);
     }
 
     private void goToReplacementTablesPage() {
-        driver.findElement(By.xpath("//*/a/span[contains(text(),'Data')]")).click();
-        driver.findElement(By.xpath("//*/a[contains(text(),'Replacement Tables')]")).click();
-        Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/replacement-tables/");
+        $(By.xpath("//*/a/span[contains(text(),'Data')]")).click();
+        $(By.xpath("//*/a[contains(text(),'Replacement Tables')]")).click();
+        Assert.assertEquals("Wrong page", urlPath(), "/replacement-tables/");
     }
 
     private void goToAdminImportBackupPage() {
-        Actions action = new Actions(driver);
+        Actions action = new Actions(getWebDriver());
 
-        action.moveToElement(driver.findElement(By.xpath("//*/a/span[contains(text(),'Settings')]"))).click();
-        action.moveToElement(driver.findElement(By.xpath("//*/a[contains(text(),'Diagnostics')]")));
-        action.moveToElement(driver.findElement(By.xpath("//*/a[contains(text(),'Backup Import')]"))).click();
+        action.moveToElement($(By.xpath("//*/a/span[contains(text(),'Settings')]"))).click();
+        action.moveToElement($(By.xpath("//*/a[contains(text(),'Diagnostics')]")));
+        action.moveToElement($(By.xpath("//*/a[contains(text(),'Backup Import')]"))).click();
         action.build().perform();
 
-        Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/admin/import-backup");
+        CommonAssertions.assertPageUrlPathEquals("/admin/import-backup");
     }
 
     private void deleteReplacementTables() {
-        setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select All']")), true);
-        driver.findElement(By.xpath("//*/button/span[@class='caret']")).click();
-        driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
-
-        WebDriverWait wait = new WebDriverWait(driver, 1);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"confirm-modal\"]/div/button[contains(text(), 'Yes')]")));
-
-        driver.findElement(By.xpath("//*[@id='confirm-modal']/div/button[contains(text(), 'Yes')]")).click();
+        setCheckbox($(By.xpath("//*/input[@title='Select All']")), true);
+        $(By.xpath("//*/button/span[@class='caret']")).click();
+        $(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
+        $(By.xpath("//*[@id=\"confirm-modal\"]/div/button[contains(text(), 'Yes')]")).waitUntil(clickable, 1000).click();
+        $(By.xpath("//*[@id='confirm-modal']/div/button[contains(text(), 'Yes')]")).click();
     }
 
     private void setCheckbox(WebElement webElement, boolean on) {

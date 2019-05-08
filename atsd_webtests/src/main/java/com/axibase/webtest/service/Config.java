@@ -4,12 +4,14 @@ import com.codeborne.selenide.Configuration;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@Slf4j
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Config {
@@ -36,7 +38,7 @@ public class Config {
                 final String password = properties.getProperty("password");
                 final String screenshotDir = properties.getProperty("screenshot_directory");
                 if (url == null || login == null || password == null || screenshotDir == null) {
-                    System.out.println("Can't read required properties");
+                    log.error("Can't read required properties");
                     System.exit(1);
                 }
                 final String chromedriverPath = properties.getProperty(CHROME_DRIVER_PROPERTY_NAME);
@@ -44,13 +46,12 @@ public class Config {
                     System.setProperty(CHROME_DRIVER_PROPERTY_NAME, chromedriverPath);
                 }
                 Configuration.baseUrl = url;
-                Configuration.headless = true;
+                Configuration.headless = Boolean.parseBoolean(properties.getProperty("selenide.headless", "true"));
                 Configuration.browser = "chrome";
                 Configuration.browserSize = "1024x768";
                 return new Config(login, password, url, screenshotDir);
             } catch (IOException e) {
-                System.out.println("Can't read property file");
-                e.printStackTrace();
+                log.error("Can't read property file", e);
                 System.exit(1);
                 throw new IllegalStateException(e);
             }

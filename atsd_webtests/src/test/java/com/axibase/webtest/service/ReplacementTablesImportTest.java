@@ -1,17 +1,23 @@
 package com.axibase.webtest.service;
 
-import org.junit.*;
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.util.List;
 
-public class ReplacementTablesImportTest extends AtsdTest {
+import static com.axibase.webtest.PageUtils.urlPath;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
-    private static String fileXml = ReplacementTablesImportTest.class.getResource("replacement-table" + File.separator + "xml-file.xml").getFile();
+public class ReplacementTablesImportTest extends AtsdTest {
+    private static final String XML_FILE = ReplacementTablesImportTest.class.getResource("replacement-table" + File.separator + "xml-file.xml").getFile();
 
     private String[][] expectedResult = {
             {"data-availability-json", "JSON", "Tommy Crow"},
@@ -22,30 +28,28 @@ public class ReplacementTablesImportTest extends AtsdTest {
 
     @Before
     public void setUp() {
-        login();
+        super.setUp();
         goToReplacementTablesImportPage();
     }
 
     @Test
     public void testImportDataImportPage() {
         setReplaceExisting(false);
-        sendFilesFromReplacementTable(fileXml);
+        sendFilesFromReplacementTable(XML_FILE);
 
         goToReplacementTablesPage();
-        Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable"))));
+        Assert.assertTrue("Wrong table content", checkTable($(By.id("overviewTable"))));
     }
 
     @Test
     public void testImportDataWithReplaceImportPage() {
         setReplaceExisting(false);
-        sendFilesFromReplacementTable(fileXml);
+        sendFilesFromReplacementTable(XML_FILE);
         setReplaceExisting(true);
-        sendFilesFromReplacementTable(fileXml);
+        sendFilesFromReplacementTable(XML_FILE);
 
         goToReplacementTablesPage();
-        Assert.assertTrue("Wrong table content",
-                checkTable(driver.findElement(By.id("overviewTable"))));
+        Assert.assertTrue("Wrong table content", checkTable($(By.id("overviewTable"))));
     }
 
     @After
@@ -54,50 +58,34 @@ public class ReplacementTablesImportTest extends AtsdTest {
     }
 
     private void sendFilesFromReplacementTable(String file) {
-        WebElement putTable = driver.findElement(By.id("putTable"));
-        WebElement inputFile = putTable.findElement(By.xpath(".//input[@type='file']"));
-        WebElement submitButton = driver.findElement(By.xpath(".//input[@type='submit']"));
-
-        inputFile.sendKeys(file);
-        submitButton.click();
-
-        Assert.assertTrue("No success message",
-                driver.findElements(By.xpath("//*/span[@class='successMessage']")).size() != 0);
+        $(By.id("putTable")).find(By.xpath(".//input[@type='file']")).uploadFile(new File(file));
+        $(By.xpath(".//input[@type='submit']")).click();
+        $$(By.xpath("//*/span[@class='successMessage']")).shouldHave(CollectionCondition.sizeGreaterThan(0));
     }
 
     private void setReplaceExisting(boolean on) {
-        setCheckbox(driver.findElement(By.xpath("*//input[@name='replace']")), on);
+        $(By.xpath("*//input[@name='replace']")).setSelected(on);
     }
 
     private void goToReplacementTablesPage() {
-        driver.findElement(By.xpath("//*/a/span[contains(text(),'Data')]")).click();
-        driver.findElement(By.xpath("//*/a[contains(text(),'Replacement Tables')]")).click();
-        Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/replacement-tables/");
+        $(By.xpath("//*/a/span[contains(text(),'Data')]")).click();
+        $(By.xpath("//*/a[contains(text(),'Replacement Tables')]")).click();
+        Assert.assertEquals("Wrong page", urlPath(), "/replacement-tables/");
     }
 
     private void goToReplacementTablesImportPage() {
         goToReplacementTablesPage();
 
-        driver.findElement(By.xpath("//*/button/span[@class='caret']")).click();
-        driver.findElement(By.xpath("//*/a[text()='Import']")).click();
-        Assert.assertEquals("Wrong page", driver.getCurrentUrl(), url + "/replacement-tables/import");
+        $(By.xpath("//*/button/span[@class='caret']")).click();
+        $(By.xpath("//*/a[text()='Import']")).click();
+        Assert.assertEquals("Wrong page", urlPath(), "/replacement-tables/import");
     }
 
     private void deleteReplacementTables() {
-        setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select All']")), true);
-        driver.findElement(By.xpath("//*/button/span[@class='caret']")).click();
-        driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
-
-        WebDriverWait wait = new WebDriverWait(driver, 1);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"confirm-modal\"]/div/button[contains(text(), 'Yes')]")));
-
-        driver.findElement(By.xpath("//*[@id='confirm-modal']/div/button[contains(text(), 'Yes')]")).click();
-    }
-
-    private void setCheckbox(WebElement webElement, boolean on) {
-        if (on != webElement.isSelected()) {
-            webElement.click();
-        }
+        $(By.xpath("//*/input[@title='Select All']")).setSelected(true);
+        $(By.xpath("//*/button/span[@class='caret']")).click();
+        $(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
+        $(By.xpath("//*[@id=\"confirm-modal\"]/div/button[contains(text(), 'Yes')]")).waitUntil(Condition.visible, 1000).click();
     }
 
     private boolean checkTable(WebElement table) {

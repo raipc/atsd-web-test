@@ -15,7 +15,7 @@ public class CommonActions {
      */
     public static void sendTextToCodeMirror(WebElement relatedTextArea, String text) {
         if (!relatedTextArea.getTagName().equals("textarea")) {
-            throw new IllegalStateException("his is not a textarea");
+            throw new IllegalStateException("this is not a textarea");
         }
         WebDriver driver = ElementUtils.getConnectedDriver(relatedTextArea);
         Actions builder = new Actions(driver);

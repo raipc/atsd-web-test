@@ -7,11 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Optional;
 
+import static com.axibase.webtest.CommonConditions.clickable;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -21,19 +22,17 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
     @Before
     public void setUp() {
-        login();
+        super.setUp();
         goToCSVParsersImportPage();
     }
 
     @After
     public void cleanup() {
         goToCSVParsersPage();
-        setCheckbox(driver.findElement(By.xpath("//*/input[@title='Select all']")), true);
-        driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
-        driver.findElement(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
-        WebDriverWait wait = new WebDriverWait(driver, 1);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")));
-        driver.findElement(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")).click();
+        $(By.xpath("//*/input[@title='Select all']")).setSelected(true);
+        $(By.xpath("//*/button[@data-toggle='dropdown']")).click();
+        $(By.xpath("//*/input[@type='submit' and @value='Delete']")).click();
+        $(By.xpath("//*[@id='confirm-modal']//button[contains(text(), 'Yes')]")).waitUntil(clickable, 1000).click();
     }
 
     @Test
@@ -43,8 +42,8 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
         goToCSVParsersPage();
 
-        final boolean isParserPresented = Optional.of(driver)
-                .map(d -> d.findElement(By.cssSelector("#configurationList > tbody")))
+
+        final boolean isParserPresented = Optional.of($("#configurationList > tbody"))
                 .map(WebElement::getText)
                 .map(text -> text.contains(PARSER_NAME))
                 .orElse(false);
@@ -60,42 +59,36 @@ public class CSVImportParserAsSeriesTest extends AtsdTest {
 
         goToCSVParsersPage();
         assertTrue("Parser is not added into table",
-                driver.findElement(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
+                $(By.cssSelector("#configurationList > tbody")).getText().contains(PARSER_NAME));
     }
 
     private void sendParserIntoTableWithoutReplacement(String file) {
-        driver.findElement(By.cssSelector("#putTable input[type=\"file\"]")).sendKeys(file);
-        driver.findElement(By.name("send")).click();
-        assertFalse("No success message", driver.findElements(By.className("successMessage")).isEmpty());
+        $(By.cssSelector("#putTable input[type=\"file\"]")).sendKeys(file);
+        $(By.name("send")).click();
+        assertFalse("No success message", $$(By.className("successMessage")).isEmpty());
     }
 
     private void sendParserIntoTableWithReplacement(String file) {
         sendParserIntoTableWithoutReplacement(file);
         assertTrue("There was no replacement",
-                driver.findElement(By.className("successMessage")).getText().matches(".*replaced:\\s[1-9]\\d*"));
+                $(By.className("successMessage")).getText().matches(".*replaced:\\s[1-9]\\d*"));
     }
 
     private void setReplaceExisting(boolean on) {
-        setCheckbox(driver.findElement(By.name("overwrite")), on);
+        $(By.name("overwrite")).setSelected(on);
     }
 
     private void goToCSVParsersPage() {
-        driver.findElement(By.linkText("Data")).click();
-        driver.findElement(By.linkText("CSV Parsers")).click();
-        CommonAssertions.assertPageUrl(url + "/csv/configs", driver.getCurrentUrl());
+        $(By.linkText("Data")).click();
+        $(By.linkText("CSV Parsers")).click();
+        CommonAssertions.assertPageUrlPathEquals("/csv/configs");
     }
 
     private void goToCSVParsersImportPage() {
         goToCSVParsersPage();
-        driver.findElement(By.xpath("//*/button[@data-toggle='dropdown']")).click();
-        driver.findElement(By.xpath("//*/a[text()='Import']")).click();
-        CommonAssertions.assertPageUrl(url + "/csv/configs/import", driver.getCurrentUrl());
-    }
-
-    private void setCheckbox(WebElement webElement, boolean on) {
-        if (on != webElement.isSelected()) {
-            webElement.click();
-        }
+        $(By.xpath("//*/button[@data-toggle='dropdown']")).click();
+        $(By.xpath("//*/a[text()='Import']")).click();
+        CommonAssertions.assertPageUrlPathEquals("/csv/configs/import");
     }
 
 }

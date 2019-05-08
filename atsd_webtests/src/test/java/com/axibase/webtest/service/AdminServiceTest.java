@@ -1,6 +1,7 @@
 package com.axibase.webtest.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
 import org.apache.commons.net.ntp.TimeStamp;
@@ -12,10 +13,11 @@ import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.codeborne.selenide.Selenide.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
+@Slf4j
 public class AdminServiceTest extends AtsdTest {
 
     private static final String[] NTP_SERVERS = new String[]{"us.pool.ntp.org", "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org"};
@@ -28,12 +30,9 @@ public class AdminServiceTest extends AtsdTest {
     }
 
     private long getAtsdTime() {
-        assertEquals(generateAssertMessage("Should get login page"), LoginService.title, driver.getTitle());
-        LoginService loginService = new LoginService(driver);
-        loginService.loginAsAdmin();
-        driver.navigate().to(url + "/admin/system-information");
-        assertEquals("title should be System Information", "System Information", driver.getTitle());
-        AdminService adminService = new AdminService(driver);
+        open( "/admin/system-information");
+        assertEquals("title should be System Information", "System Information", title());
+        AdminService adminService = new AdminService();
         String atsdDateString = adminService.getTime();
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzzz");
@@ -58,11 +57,11 @@ public class AdminServiceTest extends AtsdTest {
                     TimeStamp ntpTime = TimeStamp.getNtpTime(info.getReturnTime());
                     return ntpTime.getTime();
                 } catch (Exception e2) {
-                    System.out.println("Can't get response from server: " + server + ".");
+                    log.error("Can't get response from server: {}.", server);
                 }
             }
         } catch (SocketException se) {
-            System.out.println("Can't open client session");
+            log.error("Can't open client session", se);
         } finally {
             client.close();
         }

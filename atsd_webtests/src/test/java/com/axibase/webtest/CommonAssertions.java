@@ -2,6 +2,7 @@ package com.axibase.webtest;
 
 import org.openqa.selenium.WebElement;
 
+import static com.axibase.webtest.PageUtils.urlPath;
 import static org.junit.Assert.*;
 
 public class CommonAssertions {
@@ -43,12 +44,11 @@ public class CommonAssertions {
 
     /**
      * Compare current url with what should be
+     *  @param expectedUrl - url that should be
      *
-     * @param expectedUrl - url that should be
-     * @param currentUrl  - driver current url
      */
-    public static void assertPageUrl(String expectedUrl, String currentUrl) {
-        assertEquals("Wrong page", expectedUrl, currentUrl);
+    public static void assertPageUrlPathEquals(String expectedUrl) {
+        assertEquals("Wrong page", expectedUrl, urlPath());
     }
 
 }
