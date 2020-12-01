@@ -12,5 +12,6 @@ jobs:
   docker-pull:
     runs-on: ubuntu-latest
     steps: 
-      - run: docker://axibase/atsd_package_validation:latest
+      - run: |
+          docker run -e BRANCH=${GITHUB_REF##*/} -e ATSD_REQUIRED_REVISION=`curl -s https://axibase.com/public/atsd_deb_latest.htm | grep -oE 'atsd_([0-9]+)_amd64.deb' | head -n 1 | cut -f 2 -d _` axibase/atsd_package_validation
    
