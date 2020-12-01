@@ -10,8 +10,7 @@ on:
 
 jobs:
   docker-pull:
-    container: axibase/atsd_package_validation
     runs-on: ubuntu-latest
     steps: 
-      - run: echo "Test completed"
+      - run: docker://axibase/atsd_package_validation:latest
    
