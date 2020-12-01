@@ -1,5 +1,4 @@
 # This workflow will run web tests with Docker
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
 name: ATSD Web Tests in Docker container
 
@@ -11,7 +10,7 @@ on:
 
 jobs:
   docker-pull:
-    container: axibase/atsd-web-test
+    container: axibase/atsd_package_validation
     runs-on: ubuntu-latest
     steps: 
       - run: echo "Test completed"
